@@ -1,43 +1,31 @@
-import React from 'react';
-import { cn } from '@/utils/cn';
+import { forwardRef, memo } from 'react';
+import { cn } from '../../utils/cn';
 
-/**
- * 输入框组件
- */
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  helper?: string;
-}
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helper, type = 'text', ...props }, ref) => {
+const InputBase = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, type = 'text', disabled = false, placeholder, ...props }, ref) => {
     return (
-      <div className="flex flex-col gap-1.5">
-        {label && (
-          <label className="text-sm font-medium text-gray-700">
-            {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
-          </label>
+      <input
+        ref={ref}
+        type={type}
+        disabled={disabled}
+        placeholder={placeholder}
+        className={cn(
+          'file:text-foreground selection:bg-primary selection:text-primary-foreground',
+          'dark:bg-input/30 flex h-10 w-full min-w-0 rounded border px-3 py-1 text-base outline-none',
+          'file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
+          'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+          'md:text-sm lg:text-base',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+          'bg-white border-gray-200 transition-colors transition-shadow duration-300 placeholder:text-gray-400',
+          'focus-visible:border-primary focus:cursor-text focus:border-primary hover:border-primary/40',
+          className
         )}
-        <input
-          type={type}
-          className={cn(
-            'flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-red-500 focus:ring-red-500',
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-        {error && <span className="text-xs text-red-500">{error}</span>}
-        {helper && !error && <span className="text-xs text-gray-500">{helper}</span>}
-      </div>
+        {...props}
+      />
     );
   }
 );
 
-Input.displayName = 'Input';
+InputBase.displayName = 'Input';
 
-export { Input };
-export default Input;
+export const Input = memo(InputBase);

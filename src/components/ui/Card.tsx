@@ -1,86 +1,72 @@
-import React from 'react';
-import { cn } from '@/utils/cn';
+import { forwardRef } from 'react';
+import { cn } from '../../utils/cn';
 
-/**
- * 卡片组件
- */
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow',
-      className
-    )}
-    {...props}
-  />
-));
+const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, children, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('rounded-lg border border-gray-200 bg-white p-6 shadow-sm', className)}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+);
 
 Card.displayName = 'Card';
 
-export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('flex flex-col space-y-1.5 border-b border-gray-200 p-6', className)}
-      {...props}
-    />
+const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn('mb-4', className)} {...props}>
+      {children}
+    </div>
   )
 );
 
 CardHeader.displayName = 'CardHeader';
 
-export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
-
-const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ className, ...props }, ref) => (
+const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, children, ...props }, ref) => (
     <h2
       ref={ref}
-      className={cn('text-2xl font-semibold leading-none tracking-tight text-gray-900', className)}
+      className={cn('text-2xl font-bold leading-none tracking-tight', className)}
       {...props}
-    />
+    >
+      {children}
+    </h2>
   )
 );
 
 CardTitle.displayName = 'CardTitle';
 
-export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
-
-const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text-sm text-gray-600', className)} {...props} />
+const CardDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, children, ...props }, ref) => (
+    <p ref={ref} className={cn('text-sm text-gray-500 mt-2', className)} {...props}>
+      {children}
+    </p>
   )
 );
 
 CardDescription.displayName = 'CardDescription';
 
-export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+const CardContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn('mt-6', className)} {...props}>
+      {children}
+    </div>
   )
 );
 
 CardContent.displayName = 'CardContent';
 
-export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('flex items-center border-t border-gray-200 p-6 pt-0', className)}
-      {...props}
-    />
+const CardFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn('flex items-center gap-2 mt-6', className)} {...props}>
+      {children}
+    </div>
   )
 );
 
 CardFooter.displayName = 'CardFooter';
 
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
-
-export default Card;

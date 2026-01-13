@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { zhCN } from '@/i18n/locales/zh-CN';
+import { zh } from '@/i18n/locales/zh';
 import { en } from '@/i18n/locales/en';
 import { LANGUAGE_CONFIG, STORAGE_KEYS } from '@/constants';
 
@@ -18,7 +18,7 @@ const getSavedLanguage = (): string => {
 // i18n 资源配置
 const resources = {
   [LANGUAGE_CONFIG.ZH_CN]: {
-    translation: zhCN,
+    translation: zh,
   },
   [LANGUAGE_CONFIG.EN]: {
     translation: en,

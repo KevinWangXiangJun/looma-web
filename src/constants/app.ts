@@ -1,7 +1,9 @@
 /**
  * API 配置常量
  */
+// @ts-ignore - import.meta.env is provided by Vite
 export const API_CONFIG = {
+  // @ts-ignore
   BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   TIMEOUT: 30000,
 };

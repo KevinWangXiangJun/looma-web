@@ -1,6 +1,6 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import { ROUTES } from '@/constants';
-import LoginPage from '@/pages/LoginPage';
+import Login from '@/pages/login';
 import HomePage from '@/pages/HomePage';
 
 /**
@@ -11,7 +11,7 @@ function AppRoutes(): JSX.Element {
   return (
     <Routes>
       {/* 登录页面 */}
-      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+      <Route path={ROUTES.LOGIN} element={<Login />} />
 
       {/* 首页 */}
       <Route path={ROUTES.HOME} element={<HomePage />} />

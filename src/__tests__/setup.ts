@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { beforeEach, afterEach } from 'vitest';
 
 /**
  * Vitest 测试环境配置

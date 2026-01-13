@@ -1,0 +1,17 @@
+export const common = {
+  submit: '提交',
+  cancel: '取消',
+  save: '保存',
+  delete: '删除',
+  edit: '编辑',
+  add: '添加',
+  search: '搜索',
+  loading: '加载中...',
+  noData: '暂无数据',
+  error: '错误',
+  success: '成功',
+  warning: '警告',
+  confirm: '确认',
+  logout: '退出登录',
+  settings: '设置',
+};

@@ -7,10 +7,9 @@ import { LoginRequest, LoginResponse } from '@/types';
  * 注意：当前使用 Mock 数据，生产环境需要连接真实 API
  */
 class AuthService {
-  private httpClient: HttpClient;
-
-  constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
+  constructor(_httpClient: HttpClient) {
+    // Store for future use when API is implemented
+    void _httpClient;
   }
 
   /**

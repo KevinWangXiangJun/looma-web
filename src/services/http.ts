@@ -1,4 +1,4 @@
-import { ApiResponse, LoginRequest, LoginResponse } from '@/types';
+import { ApiResponse } from '@/types';
 
 /**
  * HTTP 请求封装类
@@ -7,11 +7,11 @@ import { ApiResponse, LoginRequest, LoginResponse } from '@/types';
  */
 class HttpClient {
   private baseURL: string;
-  private timeout: number;
 
-  constructor(baseURL: string = '', timeout: number = 30000) {
+  constructor(baseURL: string = '', _timeout: number = 30000) {
     this.baseURL = baseURL;
-    this.timeout = timeout;
+    // Store timeout for future use when timeout logic is implemented
+    void _timeout;
   }
 
   /**
