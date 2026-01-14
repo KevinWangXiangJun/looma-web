@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { fileURLToPath } from 'url';
 var __dirname = path.dirname(fileURLToPath(import.meta.url));
-// https://vitejs.dev/config/
+// https://vitejs.dev/config/ 配置参考
 export default defineConfig({
     plugins: [react()],
     test: {

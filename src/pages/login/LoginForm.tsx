@@ -15,6 +15,7 @@ interface LoginFormProps {
 
 export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) => {
   const login = useAuthStore((state) => state.login);
+  const saveLoginCredential = useAuthStore((state) => state.saveLoginCredential);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -70,6 +71,8 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (username === 'admin' && password === 'password') {
+        // 保存登录凭证
+        saveLoginCredential('username', username);
         login({ name: 'Admin', username } as any);
         navigate(from, { replace: true });
       } else {
@@ -97,6 +100,8 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (verificationCode === '1234') {
+        // 保存登录凭证
+        saveLoginCredential('phone', phone, country);
         login({ name: 'User', phone } as any);
         navigate(from, { replace: true });
       } else {

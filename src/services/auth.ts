@@ -8,7 +8,7 @@ import { LoginRequest, LoginResponse } from '@/types';
  */
 class AuthService {
   constructor(_httpClient: HttpClient) {
-    // Store for future use when API is implemented
+    // 存储供后续使用（当实现真实 API 时）
     void _httpClient;
   }
 

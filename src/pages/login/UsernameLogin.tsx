@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormInput';
+import { validateRequired } from '@/utils/validate';
 import { Eye, EyeOff } from 'lucide-react';
 
 interface UsernameLoginProps {
@@ -32,17 +33,52 @@ export const UsernameLogin = ({
   const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateForm = (): Record<string, string> => {
-    if (!username) {
-      return { username: t('login.login.usernameRequired') };
+  /**
+   * 校验用户名：检查必填
+   */
+  const validateUsernameField = (val: string): string | null => {
+    if (!validateRequired(val)) {
+      return t('login.login.usernameRequired');
     }
-    if (!password) {
-      return { password: t('login.login.passwordRequired') };
-    }
-    return {};
+    return null;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /**
+   * 校验密码：检查必填
+   */
+  const validatePasswordField = (val: string): string | null => {
+    if (!validateRequired(val)) {
+      return t('login.login.passwordRequired');
+    }
+    return null;
+  };
+
+  /**
+   * 表单完整校验（提交时调用）
+   * 一个一个校验：先校验用户名（必填），再校验密码（必填）
+   */
+  const validateForm = (): Record<string, string> => {
+    const newErrors: Record<string, string> = {};
+    
+    // 第一步：校验用户名必填
+    if (!validateRequired(username)) {
+      newErrors.username = t('login.login.usernameRequired');
+      return newErrors; // 必填未通过，直接返回
+    }
+    
+    // 第二步：校验密码必填
+    if (!validateRequired(password)) {
+      newErrors.password = t('login.login.passwordRequired');
+      return newErrors; // 必填未通过，直接返回
+    }
+    
+    return newErrors; // 所有校验通过，返回空对象
+  };
+
+  /**
+   * 处理表单提交
+   */
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
@@ -52,18 +88,71 @@ export const UsernameLogin = ({
     }
   };
 
+  /**
+   * 处理用户名输入变化
+   */
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setUsername(newValue);
+    // 有输入时校验并清除错误
+    if (newValue) {
+      const usernameErr = validateUsernameField(newValue);
+      if (usernameErr) {
+        setErrors((prev) => ({ ...prev, username: usernameErr }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.username;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.username;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理密码输入变化
+   */
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setPassword(newValue);
+    // 有输入时校验并清除错误
+    if (newValue) {
+      const passwordErr = validatePasswordField(newValue);
+      if (passwordErr) {
+        setErrors((prev) => ({ ...prev, password: passwordErr }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.password;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.password;
+        return newErrors;
+      });
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
+    <form onSubmit={handleFormSubmit}>
+      <div className="space-y-6">
         <FormInput
           label={t('login.login.username')}
           type="text"
           placeholder={t('login.login.usernameRequired')}
           value={username}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setUsername(e.target.value);
-            setErrors({});
-          }}
+          onChange={handleUsernameChange}
           disabled={loading}
           error={errors.username}
           className="bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500 rounded"
@@ -77,10 +166,7 @@ export const UsernameLogin = ({
               type={showPassword ? 'text' : 'password'}
               placeholder={t('login.login.passwordRequired')}
               value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPassword(e.target.value);
-                setErrors({});
-              }}
+              onChange={handlePasswordChange}
               disabled={loading}
               error={errors.password}
               className="bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500 rounded pr-10"
@@ -130,7 +216,7 @@ export const UsernameLogin = ({
         </button>
       </div>
 
-      <Button type="submit" className="w-full bg-primary h-10 mt-4" disabled={loading}>
+      <Button type="submit" className="w-full bg-primary h-10 mt-6" disabled={loading}>
         {loading ? t('login.login.loggingIn') : t('login.login.submit')}
       </Button>
     </form>

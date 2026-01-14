@@ -3,10 +3,12 @@ import { AuthLayout } from './AuthLayout';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
+import { usePageTitle } from '@/hooks';
 
 type ViewType = 'login' | 'register' | 'forgot';
 
 const Login = (): ReactNode => {
+  usePageTitle('login.login.title');
   const [view, setView] = useState<ViewType>('login');
 
   return (

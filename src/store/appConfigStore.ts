@@ -44,5 +44,3 @@ export const useAppConfigStore = create<AppConfigStore>((set) => ({
     }));
   },
 }));
-
-export default useAppConfigStore;

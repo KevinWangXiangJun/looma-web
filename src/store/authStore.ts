@@ -15,6 +15,10 @@ interface AuthStore extends AuthState {
   updateUser: (user: Partial<User>) => void;
   // 从本地存储恢复状态
   restoreFromStorage: () => void;
+  // 保存登录凭证（手机号或用户名）
+  saveLoginCredential: (type: 'phone' | 'username', value: string, country?: string) => void;
+  // 清除登录凭证
+  clearLoginCredential: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -23,6 +27,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   loading: false,
   error: null,
+  lastLoginCredential: undefined,
 
   // 登录
   login: (user: User) => {
@@ -44,6 +49,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       user: null,
       error: null,
       loading: false,
+      lastLoginCredential: undefined,
     });
   },
 
@@ -71,6 +77,22 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
     }
   },
-}));
 
-export default useAuthStore;
+  // 保存登录凭证
+  saveLoginCredential: (type: 'phone' | 'username', value: string, country?: string) => {
+    set({
+      lastLoginCredential: {
+        type,
+        value,
+        country,
+      },
+    });
+  },
+
+  // 清除登录凭证
+  clearLoginCredential: () => {
+    set({
+      lastLoginCredential: undefined,
+    });
+  },
+}));

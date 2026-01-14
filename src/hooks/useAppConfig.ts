@@ -45,5 +45,3 @@ export const useAppConfig = () => {
     handleToggleSidebar,
   };
 };
-
-export default useAppConfig;

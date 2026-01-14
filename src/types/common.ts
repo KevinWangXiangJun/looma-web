@@ -19,6 +19,12 @@ export interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
+  // 保存最后一次登录的凭证（手机号或用户名），方便后续页面使用
+  lastLoginCredential?: {
+    type: 'phone' | 'username';
+    value: string;
+    country?: string; // 国家代码（用于手机号）
+  };
 }
 
 /**

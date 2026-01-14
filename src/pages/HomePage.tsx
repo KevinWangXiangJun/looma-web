@@ -1,13 +1,14 @@
-
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui';
 import MainLayout from '@/pages/layouts/MainLayout';
+import { usePageTitle } from '@/hooks';
 
 /**
  * 首页
  * 展示 Hero 区和功能特性
  */
 function HomePage(): JSX.Element {
+  usePageTitle('nav.dashboard'); // 使用 "Dashboard" 或 "Home" 作为标题
   const { t } = useTranslation();
 
   return (

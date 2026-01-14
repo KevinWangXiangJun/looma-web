@@ -43,7 +43,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>((set,
   },
 
   // ========== 标签页状态 ==========
-  activeTab: 'all', // all | favorites | collections
+  activeTab: 'all', // 全部 | 收藏 | 收藏夹
 
   // ========== 列表数据状态 ==========
   artworks: {
@@ -183,5 +183,3 @@ export const useDashboardStore = create<DashboardState & DashboardActions>((set,
       lastFetchTime: null,
     }),
 }));
-
-export default useDashboardStore;

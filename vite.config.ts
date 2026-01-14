@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// https://vitejs.dev/config/
+// https://vitejs.dev/config/ 配置参考
 export default defineConfig({
   plugins: [react()],
   test: {

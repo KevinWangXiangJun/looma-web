@@ -37,5 +37,3 @@ export const useNavigationStore = create<NavigationState>((set) => ({
     }
   },
 }));
-
-export default useNavigationStore;

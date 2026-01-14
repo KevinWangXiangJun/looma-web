@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormInput';
+import { useAuthStore } from '@/store';
 import CountrySelect from './CountrySelect';
 
 interface ForgotPasswordFormProps {
@@ -12,6 +13,7 @@ interface ForgotPasswordFormProps {
 
 export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) => {
   const { t } = useTranslation();
+  const saveLoginCredential = useAuthStore((state) => state.saveLoginCredential);
   const [step, setStep] = useState(1);
   const [country, setCountry] = useState('+86');
   const [phone, setPhone] = useState('');
@@ -107,6 +109,8 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
       setLoading(true);
       try {
         console.log('Resetting password for', { phone, newPassword });
+        // 保存重置密码凭证
+        saveLoginCredential('phone', phone, country);
         onLoginClick();
       } finally {
         setLoading(false);
@@ -116,8 +120,116 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
     }
   };
 
+  /**
+   * 处理忘记密码页面手机号输入变化
+   */
+  const handleForgotPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.replace(/\D/g, '').slice(0, 11);
+    setPhone(newValue);
+    // 有输入时校验格式并清除错误
+    if (newValue) {
+      if (!/^1[3-9]\d{9}$/.test(newValue)) {
+        setErrors((prev) => ({ ...prev, phone: t('login.forgotPassword.phoneInvalid') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.phone;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.phone;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理忘记密码页面验证码输入变化
+   */
+  const handleForgotVerificationCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setVerificationCode(newValue);
+    // 有输入时校验格式并清除错误
+    if (newValue) {
+      if (!/^\d{4,6}$/.test(newValue)) {
+        setErrors((prev) => ({ ...prev, verificationCode: t('login.forgotPassword.codeInvalid') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.verificationCode;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.verificationCode;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理忘记密码页面新密码输入变化
+   */
+  const handleForgotNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setNewPassword(newValue);
+    // 有输入时校验并清除错误
+    if (newValue) {
+      if (newValue.length < 6) {
+        setErrors((prev) => ({ ...prev, newPassword: t('login.forgotPassword.passwordMinLength') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.newPassword;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.newPassword;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理忘记密码页面确认密码输入变化
+   */
+  const handleForgotConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setConfirmPassword(newValue);
+    // 有输入时校验与新密码是否匹配
+    if (newValue) {
+      if (newPassword && newValue !== newPassword) {
+        setErrors((prev) => ({ ...prev, confirmPassword: t('login.forgotPassword.passwordMismatch') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.confirmPassword;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.confirmPassword;
+        return newErrors;
+      });
+    }
+  };
+
   return (
-    <Card className="border border-gray-200 shadow-xs bg-white flex flex-col min-h-[400px] rounded">
+    <Card className="border border-gray-200 shadow-xs bg-white flex flex-col min-h-[390px] rounded">
       <CardHeader className="flex-shrink-0 border-b border-gray-300 pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl text-gray-900">
@@ -137,7 +249,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
 
       <div className="flex-1 flex flex-col">
         {/* 步骤指示器 */}
-        <div className="flex items-center justify-between mb-4 text-sm font-medium">
+        <div className="flex items-center justify-between mb-6 text-sm font-medium">
           <div className={`flex items-center ${step === 1 ? 'text-white' : 'text-gray-500'}`}>
             <span
               className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 1 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}
@@ -164,7 +276,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
         {/* 第一步表单 */}
         {step === 1 && (
           <form onSubmit={handleNextStep}>
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('login.forgotPassword.phone')}
@@ -175,10 +287,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
                     type="tel"
                     placeholder={t('login.forgotPassword.phoneRequired')}
                     value={phone}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setPhone(e.target.value);
-                      setErrors({});
-                    }}
+                    onChange={handleForgotPhoneChange}
                     error={errors.phone}
                     className="flex-1 h-10 bg-gray-50 border border-gray-300 rounded"
                     containerClassName="flex-1"
@@ -194,10 +303,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
                     type="text"
                     placeholder={t('login.forgotPassword.codeRequired')}
                     value={verificationCode}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setVerificationCode(e.target.value);
-                      setErrors({});
-                    }}
+                    onChange={handleForgotVerificationCodeChange}
                     error={errors.verificationCode}
                     className="flex-1 h-10 bg-gray-50 border border-gray-300 rounded"
                     containerClassName="flex-1"
@@ -230,7 +336,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-primary h-10 text-white mt-4">
+            <Button type="submit" className="w-full bg-primary h-10 text-white mt-6">
               {t('login.forgotPassword.nextStep')}
             </Button>
           </form>
@@ -239,16 +345,13 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
         {/* 第二步表单 */}
         {step === 2 && (
           <form onSubmit={handleResetPassword}>
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <FormInput
                 label={t('login.forgotPassword.newPassword')}
                 type="password"
                 placeholder={t('login.forgotPassword.passwordRequired')}
                 value={newPassword}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setNewPassword(e.target.value);
-                  setErrors({});
-                }}
+                onChange={handleForgotNewPasswordChange}
                 error={errors.newPassword}
                 className="h-10 bg-gray-50 border border-gray-300 rounded"
               />
@@ -258,10 +361,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
                 type="password"
                 placeholder={t('login.forgotPassword.passwordRequired')}
                 value={confirmPassword}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setConfirmPassword(e.target.value);
-                  setErrors({});
-                }}
+                onChange={handleForgotConfirmPasswordChange}
                 error={errors.confirmPassword}
                 className="h-10 bg-gray-50 border border-gray-300 rounded"
               />
@@ -280,7 +380,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
 
             <Button
               type="submit"
-              className="w-full bg-primary h-10 text-white mt-4"
+              className="w-full bg-primary h-10 text-white mt-6"
               disabled={loading}
             >
               {loading

@@ -3,11 +3,26 @@
  */
 
 /**
+ * 验证必填项
+ */
+export const validateRequired = (value: string): boolean => {
+  return value.trim().length > 0;
+};
+
+/**
  * 验证手机号
  */
 export const validatePhone = (phone: string): boolean => {
   const phoneRegex = /^1[3-9]\d{9}$/;
   return phoneRegex.test(phone);
+};
+
+/**
+ * 验证验证码 (4-6位数字)
+ */
+export const validateVerificationCode = (code: string): boolean => {
+  const codeRegex = /^\d{4,6}$/;
+  return codeRegex.test(code);
 };
 
 /**

@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormInput';
+import { useAuthStore } from '@/store';
 import CountrySelect from './CountrySelect';
 
 interface RegisterFormProps {
@@ -12,6 +13,7 @@ interface RegisterFormProps {
 
 export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
   const { t } = useTranslation();
+  const saveLoginCredential = useAuthStore((state) => state.saveLoginCredential);
   const [step, setStep] = useState(1);
   const [country, setCountry] = useState('+86');
   const [phone, setPhone] = useState('');
@@ -107,6 +109,8 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
       setLoading(true);
       try {
         console.log('Registering with', { phone, password });
+        // 保存注册凭证
+        saveLoginCredential('phone', phone, country);
         onLoginClick();
       } finally {
         setLoading(false);
@@ -116,8 +120,116 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
     }
   };
 
+  /**
+   * 处理注册页面手机号输入变化
+   */
+  const handleRegisterPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.replace(/\D/g, '').slice(0, 11);
+    setPhone(newValue);
+    // 有输入时校验格式并清除错误
+    if (newValue) {
+      if (!/^1[3-9]\d{9}$/.test(newValue)) {
+        setErrors((prev) => ({ ...prev, phone: t('login.register.phoneInvalid') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.phone;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.phone;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理注册页面验证码输入变化
+   */
+  const handleRegisterVerificationCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setVerificationCode(newValue);
+    // 有输入时校验格式并清除错误
+    if (newValue) {
+      if (!/^\d{4,6}$/.test(newValue)) {
+        setErrors((prev) => ({ ...prev, verificationCode: t('login.register.codeInvalid') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.verificationCode;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.verificationCode;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理注册页面密码输入变化
+   */
+  const handleRegisterPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setPassword(newValue);
+    // 有输入时校验并清除错误
+    if (newValue) {
+      if (newValue.length < 6) {
+        setErrors((prev) => ({ ...prev, password: t('login.register.passwordMinLength') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.password;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.password;
+        return newErrors;
+      });
+    }
+  };
+
+  /**
+   * 处理注册页面确认密码输入变化
+   */
+  const handleRegisterConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setConfirmPassword(newValue);
+    // 有输入时校验与密码是否匹配
+    if (newValue) {
+      if (password && newValue !== password) {
+        setErrors((prev) => ({ ...prev, confirmPassword: t('login.register.passwordMismatch') }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.confirmPassword;
+          return newErrors;
+        });
+      }
+    } else {
+      // 清空时清除错误
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.confirmPassword;
+        return newErrors;
+      });
+    }
+  };
+
   return (
-    <Card className="border border-gray-200 shadow-xs bg-white flex flex-col min-h-[400px] rounded">
+    <Card className="border border-gray-200 shadow-xs bg-white flex flex-col min-h-[390px] rounded">
       <CardHeader className="flex-shrink-0 border-b border-gray-300 pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl text-gray-900">{t('login.register.title')}</CardTitle>
@@ -135,7 +247,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
 
       <div className="flex-1 flex flex-col">
         {/* 步骤指示器 */}
-        <div className="flex items-center justify-between mb-4 text-sm font-medium">
+        <div className="flex items-center justify-between mb-6 text-sm font-medium">
           <div className={`flex items-center ${step === 1 ? 'text-white' : 'text-gray-500'}`}>
             <span
               className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 1 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}
@@ -162,7 +274,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
         {/* 第一步表单 */}
         {step === 1 && (
           <form onSubmit={handleNextStep}>
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('login.register.phone')}
@@ -173,10 +285,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
                     type="tel"
                     placeholder={t('login.register.phoneRequired')}
                     value={phone}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setPhone(e.target.value);
-                      setErrors({});
-                    }}
+                    onChange={handleRegisterPhoneChange}
                     error={errors.phone}
                     className="flex-1 h-10 bg-gray-50 border border-gray-300 rounded"
                     containerClassName="flex-1"
@@ -192,10 +301,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
                     type="text"
                     placeholder={t('login.register.codeRequired')}
                     value={verificationCode}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setVerificationCode(e.target.value);
-                      setErrors({});
-                    }}
+                    onChange={handleRegisterVerificationCodeChange}
                     error={errors.verificationCode}
                     className="flex-1 h-10 bg-gray-50 border border-gray-300 rounded"
                     containerClassName="flex-1"
@@ -228,7 +334,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-primary h-10 text-white mt-4">
+            <Button type="submit" className="w-full bg-primary h-10 text-white mt-6">
               {t('login.register.nextStep')}
             </Button>
           </form>
@@ -237,16 +343,13 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
         {/* 第二步表单 */}
         {step === 2 && (
           <form onSubmit={handleRegister}>
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <FormInput
                 label={t('login.register.password')}
                 type="password"
                 placeholder={t('login.register.passwordRequired')}
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPassword(e.target.value);
-                  setErrors({});
-                }}
+                onChange={handleRegisterPasswordChange}
                 error={errors.password}
                 className="h-10 bg-gray-50 border border-gray-300 rounded"
               />
@@ -256,10 +359,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
                 type="password"
                 placeholder={t('login.register.passwordRequired')}
                 value={confirmPassword}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setConfirmPassword(e.target.value);
-                  setErrors({});
-                }}
+                onChange={handleRegisterConfirmPasswordChange}
                 error={errors.confirmPassword}
                 className="h-10 bg-gray-50 border border-gray-300 rounded"
               />
@@ -278,7 +378,7 @@ export const RegisterForm = ({ onLoginClick }: RegisterFormProps) => {
 
             <Button
               type="submit"
-              className="w-full bg-primary h-10 text-white mt-4"
+              className="w-full bg-primary h-10 text-white mt-6"
               disabled={loading}
             >
               {loading ? t('login.register.registering') : t('login.register.register')}

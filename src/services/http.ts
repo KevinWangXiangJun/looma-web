@@ -10,7 +10,7 @@ class HttpClient {
 
   constructor(baseURL: string = '', _timeout: number = 30000) {
     this.baseURL = baseURL;
-    // Store timeout for future use when timeout logic is implemented
+    // 存储超时时间供后续使用（当实现超时逻辑时）
     void _timeout;
   }
 
