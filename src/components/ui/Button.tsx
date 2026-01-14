@@ -10,11 +10,11 @@ const Button = forwardRef<
 >(
   ({ className, variant = 'default', size = 'md', disabled = false, children, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+      'inline-flex items-center justify-center font-medium transition-colors rounded-md focus:outline-none focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants: Record<ButtonVariant, string> = {
-      default: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500',
-      outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-primary-500',
+      default: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-600',
+      outline: 'border border-gray-300 text-gray-700 hover:bg-gray-200 focus:ring-primary-600',
       ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-primary-500',
       destructive: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
     };

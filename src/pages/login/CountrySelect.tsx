@@ -3,7 +3,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/Select';
 import { COUNTRIES } from '@/constants';
 
@@ -20,7 +19,6 @@ interface CountrySelectProps {
 
 export const CountrySelect = ({ country = '+86', onCountryChange }: CountrySelectProps) => {
   // 根据传入的电话代码查找匹配的国家对象
-  // 注意：如果有多个国家共享相同的代码（例如 +1），这将默认匹配列表中的第一个
   const selectedCountry = COUNTRIES.find((c) => c.phoneCode === country);
   
   // 如果找到，使用唯一的 'countryCode' (ISO 代码)，否则为 undefined
@@ -37,19 +35,19 @@ export const CountrySelect = ({ country = '+86', onCountryChange }: CountrySelec
 
   return (
     <Select value={selectValue} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-[100px] h-10 bg-gray-50 border border-gray-300 rounded px-3 py-1 flex-shrink-0">
-        <SelectValue />
+      <SelectTrigger className="w-[100px] h-10 bg-gray-50 border border-gray-300 rounded px-3 py-1 flex-shrink-0 focus:ring-0 focus:border-gray-300 focus:ring-offset-0">
+        <span className="truncate">{selectedCountry?.phoneCode}</span>
       </SelectTrigger>
-      <SelectContent className="border border-gray-300 rounded max-h-[226px]">
+
+      <SelectContent className="max-h-[226px]">
         {COUNTRIES.map((c: CountryOption) => (
           <SelectItem
             key={c.countryCode}
             value={c.countryCode}
-            className={`text-sm flex items-center gap-2 py-2 hover:bg-gray-200 data-[state=checked]:bg-gray-300`}
+            className="flex items-center justify-between py-2 pr-3 text-gray-900"
           >
-            <span>
-              {c.countryName} {c.phoneCode}
-            </span>
+            <span>{c.countryName}</span>
+            <span className="ml-2">{c.phoneCode}</span>
           </SelectItem>
         ))}
       </SelectContent>

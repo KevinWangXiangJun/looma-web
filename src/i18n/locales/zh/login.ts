@@ -1,7 +1,7 @@
 export const login = {
   layout: {
     appTitle: 'Looma',
-    appTagline: '您的创意。AI设计。真实印刷。',
+    appTagline: '如您所想。由 AI 编织。无缝，无限，即用。',
     welcome: '欢迎来到',
     allRightsReserved: '版权所有',
     loadingImages: '正在加载图片...',
@@ -22,9 +22,9 @@ export const login = {
     verificationCode: '验证码',
     phoneRequired: '请输入手机号',
     phoneInvalid: '请输入正确的手机号',
-    codeRequired: '请输入手机号和验证码',
+    codeRequired: '请输入验证码',
     codeError: '验证码错误',
-    phoneAndCodeRequired: '请输入手机号和验证码',
+    phoneAndCodeRequired: '请输入验证码',
     usernameRequired: '请输入用户名',
     passwordRequired: '请输入密码',
     forgotPassword: '忘记密码',

@@ -130,7 +130,7 @@ export const PhoneLogin = ({
               onClick={handleSendCodeClick}
               disabled={codeLoading || countDown > 0 || loading}
               variant="outline"
-              className="whitespace-nowrap px-4 h-10 hover:bg-primary/90 hover:text-white hover:border-primary disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300"
+              className="whitespace-nowrap px-4 h-10 hover:bg-primary-600 hover:text-white hover:border-primary disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300"
             >
               {codeLoading
                 ? t('login.login.sending')

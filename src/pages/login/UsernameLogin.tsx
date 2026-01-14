@@ -124,7 +124,7 @@ export const UsernameLogin = ({
         <button
           type="button"
           onClick={onForgotClick}
-          className="text-sm text-primary hover:text-primary font-medium inline-flex items-center gap-1 cursor-pointer"
+          className="text-sm text-primary-500 hover:text-primary-600 font-medium inline-flex items-center gap-1 cursor-pointer"
         >
           {t('login.login.forgotPassword')}
         </button>

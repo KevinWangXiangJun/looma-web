@@ -119,10 +119,10 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
             {t('login.login.noAccount')}{' '}
             <button
               onClick={onRegisterClick}
-              className="text-primary hover:text-primary font-medium inline-flex items-center gap-1 cursor-pointer"
+              className="text-primary-500 hover:text-primary-600 font-medium inline-flex items-center cursor-pointer"
             >
               {t('login.login.freeRegister')}
-              <ChevronRight className="h-5 w-5 text-primary" />
+              <ChevronRight className="h-5 w-5 text-primary-500 hover:text-primary-600" />
             </button>
           </CardDescription>
         </div>
