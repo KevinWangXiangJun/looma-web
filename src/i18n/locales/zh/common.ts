@@ -1,4 +1,5 @@
 export const common = {
+  appName: 'Looma',
   submit: '提交',
   cancel: '取消',
   save: '保存',
@@ -14,4 +15,9 @@ export const common = {
   confirm: '确认',
   logout: '退出登录',
   settings: '设置',
+  // 通知
+  notifications: '通知',
+  markAllAsRead: '全部标为已读',
+  noNotifications: '暂无通知',
+  viewAllNotifications: '查看全部通知',
 };

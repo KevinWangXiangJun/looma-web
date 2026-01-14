@@ -7,7 +7,7 @@ import { usePageTitle } from '@/hooks';
 
 type ViewType = 'login' | 'register' | 'forgot';
 
-const Login = (): ReactNode => {
+export const Login = (): ReactNode => {
   usePageTitle('login.login.title');
   const [view, setView] = useState<ViewType>('login');
 

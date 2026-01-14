@@ -238,10 +238,10 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
           <CardDescription className="text-gray-600 text-sm m-0">
             <button
               onClick={onLoginClick}
-              className="text-primary hover:text-primary font-medium inline-flex items-center gap-1 cursor-pointer"
+              className="text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 cursor-pointer transition-colors"
             >
               {t('login.forgotPassword.goLogin')}
-              <ChevronRight className="h-5 w-5 text-primary" />
+              <ChevronRight className="h-5 w-5 text-primary-600" />
             </button>
           </CardDescription>
         </div>
@@ -252,7 +252,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
         <div className="flex items-center justify-between mb-6 text-sm font-medium">
           <div className={`flex items-center ${step === 1 ? 'text-white' : 'text-gray-500'}`}>
             <span
-              className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 1 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}
+              className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 1 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500'}`}
             >
               1
             </span>
@@ -263,7 +263,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
           <div className="w-20 h-[1px] bg-gray-300 ml-4 mr-4 flex-1"></div>
           <div className={`flex items-center ${step === 2 ? 'text-white' : 'text-gray-500'}`}>
             <span
-              className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 2 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}
+              className={`flex items-center justify-center w-6 h-6 rounded-full mr-2 ${step === 2 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500'}`}
             >
               2
             </span>
@@ -313,7 +313,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
                     onClick={handleSendCode}
                     disabled={codeLoading || countDown > 0}
                     variant="outline"
-                    className="whitespace-nowrap px-4 h-10 hover:bg-primary/90 hover:text-white hover:border-primary disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300"
+                    className="whitespace-nowrap px-4 h-10 border-primary-300 text-primary-600 bg-primary-50 hover:bg-primary-100 hover:border-primary-400 hover:text-primary-700 disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300 transition-colors"
                   >
                     {codeLoading
                       ? t('login.forgotPassword.sending')
@@ -336,7 +336,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-primary h-10 text-white mt-6">
+            <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-700 text-white h-10 mt-6 transition-colors">
               {t('login.forgotPassword.nextStep')}
             </Button>
           </form>
@@ -380,7 +380,7 @@ export const ForgotPasswordForm = ({ onLoginClick }: ForgotPasswordFormProps) =>
 
             <Button
               type="submit"
-              className="w-full bg-primary h-10 text-white mt-6"
+              className="w-full bg-primary-600 hover:bg-primary-700 text-white h-10 mt-6 transition-colors"
               disabled={loading}
             >
               {loading

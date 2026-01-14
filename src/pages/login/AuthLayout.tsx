@@ -10,7 +10,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
   const { t } = useTranslation();
 
   return (
-    <div className="h-screen w-full flex bg-gradient-to-br from-blue-300 to-purple-300 overflow-hidden items-center justify-center">
+    <div className="h-screen w-full flex bg-gradient-to-br from-blue-300 to-primary-300 overflow-hidden items-center justify-center">
       <div className="w-full h-full max-w-[1920px] flex mx-auto relative lg:h-[90vh] lg:my-auto lg:overflow-hidden">
         {/* 左侧 - 轮播图 */}
         <LoginCarousel />
@@ -21,7 +21,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
             <div className="mb-8 pl-1">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 {t('login.layout.welcome')}{' '}
-                <span className="text-primary">{t('login.layout.appTitle')}</span>
+                <span className="bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">{t('login.layout.appTitle')}</span>
               </h2>
             </div>
             {children}

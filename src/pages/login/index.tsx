@@ -1,4 +1,2 @@
-import Login from './Login';
-
-export { default as LoginPage } from './Login';
-export default Login;
+export { Login as default } from './Login';
+export { Login } from './Login';

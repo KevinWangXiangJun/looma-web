@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { useAuthStore } from '@/store';
+import { authService } from '@/services';
 import { UsernameLogin } from './UsernameLogin';
 import { PhoneLogin } from './PhoneLogin';
 
@@ -31,6 +32,7 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
   const [loading, setLoading] = useState(false);
   const [codeLoading, setCodeLoading] = useState(false);
   const [countDown, setCountDown] = useState(0);
+  const [tabValue, setTabValue] = useState('phone');
 
   useEffect(() => {
     if (countDown <= 0) return;
@@ -71,9 +73,15 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (username === 'admin' && password === 'password') {
+        // 调用 AuthService 登录，返回 mockUsers 第二条数据
+        const response = await authService.login({
+          username,
+          password,
+        });
+        
         // 保存登录凭证
         saveLoginCredential('username', username);
-        login({ name: 'Admin', username } as any);
+        login(response.user);
         navigate(from, { replace: true });
       } else {
         setError(t('login.login.error'));
@@ -99,10 +107,16 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      if (verificationCode === '1234') {
+      if (verificationCode) {
+        // 调用 AuthService 登录，返回 mockUsers 第一条数据（李明）
+        const response = await authService.login({
+          phone,
+          country,
+        });
+        
         // 保存登录凭证
         saveLoginCredential('phone', phone, country);
-        login({ name: 'User', phone } as any);
+        login(response.user);
         navigate(from, { replace: true });
       } else {
         setError(t('login.login.codeError'));
@@ -124,21 +138,24 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
             {t('login.login.noAccount')}{' '}
             <button
               onClick={onRegisterClick}
-              className="text-primary-500 hover:text-primary-600 font-medium inline-flex items-center cursor-pointer"
+              className="text-primary-600 hover:text-primary-700 font-medium inline-flex items-center cursor-pointer transition-colors"
             >
               {t('login.login.freeRegister')}
-              <ChevronRight className="h-5 w-5 text-primary-500 hover:text-primary-600" />
+              <ChevronRight className="h-5 w-5 text-primary-600" />
             </button>
           </CardDescription>
         </div>
       </CardHeader>
 
       <Tabs
-        defaultValue="phone"
+        value={tabValue}
+        onValueChange={(value) => {
+          setTabValue(value);
+          setError('');
+        }}
         className="flex flex-col flex-1"
-        onValueChange={() => setError('')}
       >
-        <div className="flex-shrink-0 pt-2 pb-2">
+        <div className="flex-shrink-0 pt-2 pb-2 border-b border-gray-200">
           <TabsList className="w-full justify-start" variant="button">
             <TabsTrigger value="phone" variant="button">
               {t('login.login.phoneTab')}
@@ -150,7 +167,7 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
         </div>
 
         <div className="flex-1 pt-2">
-          <TabsContent value="phone" className="space-y-4 mt-0">
+          <TabsContent value="phone" className="space-y-4 mt-0" key="phone">
             <PhoneLogin
               country={country}
               setCountry={setCountry}
@@ -164,10 +181,11 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
               countDown={countDown}
               onSendCode={handleSendCode}
               onSubmit={handlePhoneLogin}
+              clearTrigger={tabValue === 'phone' ? 1 : 0}
             />
           </TabsContent>
 
-          <TabsContent value="username" className="space-y-4 mt-0">
+          <TabsContent value="username" className="space-y-4 mt-0" key="username">
             <UsernameLogin
               username={username}
               setUsername={setUsername}
@@ -179,6 +197,7 @@ export const LoginForm = ({ onRegisterClick, onForgotClick }: LoginFormProps) =>
               loading={loading}
               onSubmit={handleUsernameLogin}
               onForgotClick={onForgotClick}
+              clearTrigger={tabValue === 'username' ? 1 : 0}
             />
           </TabsContent>
         </div>

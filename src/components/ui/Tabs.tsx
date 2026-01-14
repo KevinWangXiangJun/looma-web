@@ -34,7 +34,7 @@ const TabsTrigger = forwardRef<
     'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-white transition-colors transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:text-gray-900 hover:bg-gray-200 data-[state=active]:hover:bg-white data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm';
 
   const buttonStyles =
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium border border-gray-200 bg-white text-gray-600 focus-visible:outline-none disabled:opacity-50 hover:text-gray-900 hover:bg-gray-200 transition-colors data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:border-primary hover:data-[state=active]:bg-primary-600 hover:data-[state=active]:border-primary-600';
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium border border-gray-200 bg-white text-gray-600 focus-visible:outline-none disabled:opacity-50 hover:text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition-colors data-[state=active]:bg-primary-600 data-[state=active]:text-white data-[state=active]:border-primary-600 hover:data-[state=active]:bg-primary-700 hover:data-[state=active]:border-primary-700';
 
   return (
     <TabsPrimitive.Trigger

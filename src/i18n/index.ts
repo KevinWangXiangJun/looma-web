@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import { zh } from '@/i18n/locales/zh';
 import { en } from '@/i18n/locales/en';
 import { LANGUAGE_CONFIG, STORAGE_KEYS } from '@/constants';
+import { getStorageKey } from '@/utils';
 
 /**
  * i18n 配置和初始化
@@ -11,7 +12,7 @@ import { LANGUAGE_CONFIG, STORAGE_KEYS } from '@/constants';
 
 // 获取保存的语言或使用默认语言
 const getSavedLanguage = (): string => {
-  const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+  const saved = localStorage.getItem(getStorageKey(STORAGE_KEYS.AUTH_LANGUAGE));
   return saved || LANGUAGE_CONFIG.ZH_CN;
 };
 
@@ -41,7 +42,7 @@ i18n
 
 // 监听语言变化并保存到本地存储
 i18n.on('languageChanged', (lng: string) => {
-  localStorage.setItem(STORAGE_KEYS.LANGUAGE, lng);
+  localStorage.setItem(getStorageKey(STORAGE_KEYS.AUTH_LANGUAGE), lng);
 });
 
 export default i18n;

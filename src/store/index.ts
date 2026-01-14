@@ -7,3 +7,4 @@ export { useAuthStore } from './authStore';
 export { useAppConfigStore } from './appConfigStore';
 export { useDashboardStore } from './dashboardStore';
 export { useNavigationStore } from './navigationStore';
+export { useNotificationStore } from './notificationStore';

@@ -21,12 +21,14 @@ export const LOGIN_CONFIG = {
 
 /**
  * 存储键名常量
+ * 这些是存储键的前缀模板，实际使用时会通过 getStorageKey() 函数生成用户特定的键名
  */
 export const STORAGE_KEYS = {
-  TOKEN: 'looma_token',
-  USER: 'looma_user',
-  LANGUAGE: 'looma_language',
-  THEME: 'looma_theme',
+  AUTH_TOKEN: 'auth:token',
+  AUTH_USER: 'auth:user',
+  AUTH_THEME: 'auth:theme',
+  AUTH_LANGUAGE: 'auth:language',
+  AUTH_SIDEBAR_COLLAPSED: 'auth:sidebar:collapsed',
 };
 
 /**
@@ -34,8 +36,8 @@ export const STORAGE_KEYS = {
  */
 export const ROUTES = {
   LOGIN: '/login',
-  HOME: '/',
-  DASHBOARD: '/dashboard',
+  HOME: '/home',
+  DASHBOARD: '/home',
   PROFILE: '/profile',
   SETTINGS: '/settings',
   NOT_FOUND: '/404',

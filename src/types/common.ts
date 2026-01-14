@@ -62,6 +62,7 @@ export interface LoginRequest {
   phone?: string;
   username?: string;
   password?: string;
+  country?: string;
 }
 
 /**

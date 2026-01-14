@@ -18,6 +18,7 @@ interface PhoneLoginProps {
   onSubmit: (e: React.FormEvent) => void;
   country: string;
   setCountry: (value: string) => void;
+  clearTrigger?: number;
 }
 
 export const PhoneLogin = ({
@@ -33,9 +34,15 @@ export const PhoneLogin = ({
   onSubmit,
   country,
   setCountry,
+  clearTrigger,
 }: PhoneLoginProps) => {
   const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 当clearTrigger改变时，清除errors
+  React.useEffect(() => {
+    setErrors({});
+  }, [clearTrigger]);
 
   /**
    * 校验手机号：先检查必填，再检查格式
@@ -207,7 +214,7 @@ export const PhoneLogin = ({
               onClick={handleSendCodeClick}
               disabled={codeLoading || countDown > 0 || loading}
               variant="outline"
-              className="whitespace-nowrap px-4 h-10 hover:bg-primary-600 hover:text-white hover:border-primary disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300"
+              className="whitespace-nowrap px-4 h-10 border-primary-300 text-primary-600 bg-primary-50 hover:bg-primary-100 hover:border-primary-400 hover:text-primary-700 disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-300 transition-colors"
             >
               {codeLoading
                 ? t('login.login.sending')
@@ -237,7 +244,7 @@ export const PhoneLogin = ({
         </div>
       )}
 
-      <Button type="submit" className="w-full bg-primary h-10 mt-6" disabled={loading}>
+      <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-700 text-white h-10 mt-6 transition-colors" disabled={loading}>
         {loading ? t('login.login.loggingIn') : t('login.login.submit')}
       </Button>
     </form>

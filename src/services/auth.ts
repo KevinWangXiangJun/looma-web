@@ -1,5 +1,6 @@
 import HttpClient from '@/services/http';
 import { LoginRequest, LoginResponse } from '@/types';
+import { mockUsers } from '@/__mock__';
 
 /**
  * 认证相关 API 服务
@@ -19,22 +20,26 @@ class AuthService {
    * 
    * 后续集成真实 API 时，取消注释下面的真实请求代码：
    * return this.httpClient.post<LoginResponse>('/auth/login', loginRequest);
+   * 
+   * Mock 逻辑：
+   * - 手机号登录：返回第一条 mockUsers 数据（李明）
+   * - 用户名登录：返回第二条 mockUsers 数据（user2）
    */
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
     // 当前使用 Mock 数据，需要调用真实 API 时取消注释下面的代码
     // const response = await this.httpClient.post<LoginResponse>('/auth/login', loginRequest);
     // return response.data;
 
-    // Mock 数据返回
+    // Mock 数据返回 - 根据登录类型返回不同的 mockUsers 数据
+    const user = loginRequest.phone ? mockUsers[0] : mockUsers[1];
+    
     return Promise.resolve({
       token: 'mock_token_' + Date.now(),
       user: {
-        id: '1',
-        phone: loginRequest.phone || '',
-        username: loginRequest.username || '',
-        email: 'user@example.com',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=looma',
-        createdAt: new Date().toISOString(),
+        ...user,
+        phone: loginRequest.phone || user.phone,
+        username: loginRequest.username || user.username,
+        createdAt: user.createdAt,
       },
     });
   }
@@ -57,13 +62,8 @@ class AuthService {
    * return response.data;
    */
   async getCurrentUser() {
-    // Mock 数据
-    return Promise.resolve({
-      id: '1',
-      username: 'mockuser',
-      email: 'user@example.com',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=looma',
-    });
+    // Mock 数据 - 返回第一条 mockUsers 数据
+    return Promise.resolve(mockUsers[0]);
   }
 }
 

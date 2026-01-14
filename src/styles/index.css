@@ -7,18 +7,18 @@
     /* ========================================================================
        1. COLOR PALETTE (Channel Values for Tailwind Opacity Support)
        ======================================================================== */
-    /* Primary (Blue) */
-    --color-primary-50: 0.975 0.02 240;
-    --color-primary-100: 0.94 0.05 240;
-    --color-primary-200: 0.88 0.09 240;
-    --color-primary-300: 0.8 0.14 240;
-    --color-primary-400: 0.7 0.18 240;
-    --color-primary-500: 0.62 0.2 240;
-    --color-primary-600: 0.52 0.2 240;
-    --color-primary-700: 0.44 0.18 240;
-    --color-primary-800: 0.35 0.15 240;
-    --color-primary-900: 0.25 0.1 240;
-    --color-primary: 0.63 0.15 262; /* Default Primary */
+    /* Primary (Purple) */
+    --color-primary-50: 0.984 0.014 293.756;
+    --color-primary-100: 0.968 0.032 293.756;
+    --color-primary-200: 0.922 0.065 293.756;
+    --color-primary-300: 0.861 0.113 292.735;
+    --color-primary-400: 0.759 0.188 293.054;
+    --color-primary-500: 0.627 0.265 303.9;
+    --color-primary-600: 0.558 0.288 302.321;
+    --color-primary-700: 0.496 0.265 301.924;
+    --color-primary-800: 0.421 0.203 303.342;
+    --color-primary-900: 0.356 0.155 303.899;
+    --color-primary: 0.59 0.20 290; /* Default Primary - Purple */
 
     /* Red */
     --color-red-50: 0.98 0.02 25.331;

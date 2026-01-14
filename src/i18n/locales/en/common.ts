@@ -1,4 +1,5 @@
 export const common = {
+  appName: 'Looma',
   submit: 'Submit',
   cancel: 'Cancel',
   save: 'Save',
@@ -14,4 +15,9 @@ export const common = {
   confirm: 'Confirm',
   logout: 'Logout',
   settings: 'Settings',
+  // Notification
+  notifications: 'Notifications',
+  markAllAsRead: 'Mark all as read',
+  noNotifications: 'No notifications',
+  viewAllNotifications: 'View all notifications',
 };

@@ -11,6 +11,9 @@ export { FormInput } from './FormInput';
 export { Tag } from './Tag';
 export { Textarea } from './Textarea';
 
+// 样式指南
+export { INPUT_STYLES, INPUT_PRESETS } from './input-styles';
+
 // Card 组件族
 export {
   Card,

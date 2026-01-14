@@ -10,20 +10,16 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const FormInputBase = forwardRef<HTMLInputElement, FormInputProps>(
   ({ label, error, className, containerClassName, ...props }, ref) => {
-    // 提取外层传入的 className 中与 border/ring 相关的样式，然后用错误样式覆盖
-    // 最优方案：直接在这里管理所有的 border 样式，确保错误状态优先级最高
-    const finalClassName = cn(
-      className,
-      // 错误状态的样式必须最后，确保 CSS 级联时优先级最高
-      error && [
-        'border-red-500',
-        'hover:border-red-500',
-        'focus:border-red-500',
-        'focus-visible:border-red-500',
-        'ring-red-500/20',
-        'dark:ring-red-500/40'
-      ]
-    );
+    // 当有错误时，应用错误状态样式覆盖基础样式
+    const errorStyles = error ? [
+      'border-red-500',
+      'hover:border-red-600',
+      'hover:bg-red-50',
+      'focus:border-red-500',
+      'focus:ring-red-100',
+      'focus-visible:border-red-500',
+      'focus-visible:ring-red-100',
+    ].join(' ') : '';
 
     return (
       <div className={cn('flex flex-col', containerClassName)}>
@@ -31,7 +27,7 @@ const FormInputBase = forwardRef<HTMLInputElement, FormInputProps>(
         <Input
           ref={ref}
           aria-invalid={!!error}
-          className={finalClassName}
+          className={cn(className, errorStyles)}
           {...props}
         />
       </div>

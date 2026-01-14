@@ -16,6 +16,7 @@ interface UsernameLoginProps {
   loading: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onForgotClick: () => void;
+  clearTrigger?: number;
 }
 
 export const UsernameLogin = ({
@@ -29,9 +30,15 @@ export const UsernameLogin = ({
   loading,
   onSubmit,
   onForgotClick,
+  clearTrigger,
 }: UsernameLoginProps) => {
   const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 当clearTrigger改变时，清除errors
+  React.useEffect(() => {
+    setErrors({});
+  }, [clearTrigger]);
 
   /**
    * 校验用户名：检查必填
@@ -204,19 +211,19 @@ export const UsernameLogin = ({
 
       <div className="flex items-center justify-between text-sm mt-4">
         <label className="flex items-center">
-          <input type="checkbox" className="rounded mr-2 border border-gray-300" />
+          <input type="checkbox" className="rounded mr-2 border border-gray-300 accent-primary-600" />
           <span className="text-gray-700">记住我</span>
         </label>
         <button
           type="button"
           onClick={onForgotClick}
-          className="text-sm text-primary-500 hover:text-primary-600 font-medium inline-flex items-center gap-1 cursor-pointer"
+          className="text-sm text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 cursor-pointer transition-colors"
         >
           {t('login.login.forgotPassword')}
         </button>
       </div>
 
-      <Button type="submit" className="w-full bg-primary h-10 mt-6" disabled={loading}>
+      <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-700 text-white h-10 mt-6 transition-colors" disabled={loading}>
         {loading ? t('login.login.loggingIn') : t('login.login.submit')}
       </Button>
     </form>

@@ -4,15 +4,56 @@
  */
 
 /**
+ * Mock 通知列表
+ */
+export const mockNotifications = [
+  {
+    id: '1',
+    title: '新项目创建成功',
+    message: '您的项目 "Summer Campaign" 已成功创建',
+    timestamp: '2 分钟前',
+    isRead: false,
+  },
+  {
+    id: '2',
+    title: '品牌审核通过',
+    message: '品牌 "Nike Co." 已通过审核，现已发布',
+    timestamp: '1 小时前',
+    isRead: false,
+  },
+  {
+    id: '3',
+    title: '任务已完成',
+    message: '内容规划任务 "Q1 Strategy" 已标记完成',
+    timestamp: '3 小时前',
+    isRead: true,
+  },
+  {
+    id: '4',
+    title: '新评论',
+    message: '您的设计作品收到了一条新评论',
+    timestamp: '1 天前',
+    isRead: true,
+  },
+  {
+    id: '5',
+    title: '系统维护通知',
+    message: '系统将于明日凌晨 2:00-4:00 进行维护',
+    timestamp: '2 天前',
+    isRead: true,
+  },
+];
+
+/**
  * Mock 用户列表
  */
 export const mockUsers = [
   {
     id: '1',
-    username: 'user1',
+    username: '李明',
     phone: '13800138000',
-    email: 'user1@example.com',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1',
+    email: 'liming@example.com',
+    avatar: '',
     createdAt: '2024-01-01T00:00:00Z',
   },
   {
@@ -20,7 +61,7 @@ export const mockUsers = [
     username: 'user2',
     phone: '13800138001',
     email: 'user2@example.com',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2',
+    avatar: '',
     createdAt: '2024-01-02T00:00:00Z',
   },
 ];
