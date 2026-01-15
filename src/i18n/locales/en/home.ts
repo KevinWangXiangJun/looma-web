@@ -1,5 +1,5 @@
 /**
- * Home Page Translations
+ * 主页页面翻译
  */
 export const home = {
   hero: {

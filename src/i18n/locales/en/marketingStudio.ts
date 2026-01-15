@@ -1,5 +1,5 @@
 /**
- * Marketing Studio Page Translations
+ * 营销工作室页面翻译
  */
 export const marketingStudio = {
   title: 'Marketing Studio',

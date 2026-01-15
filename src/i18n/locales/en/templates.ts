@@ -1,5 +1,5 @@
 /**
- * Templates Page Translations
+ * 模板页面翻译
  */
 export const templates = {
   title: 'Templates',

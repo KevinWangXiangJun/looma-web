@@ -9,7 +9,7 @@ import { SidebarPanel } from './SidebarPanel';
 import { MenuToggleButton } from './MenuToggleButton';
 import { CreateButton } from '@/pages/create/CreateButton';
 import { MoreNavButton } from './MoreNavButton';
-import { getSidebarPanelContent } from './sidebarPanelContent';
+import { getSidebarPanelContent } from './SidebarPanelContent';
 import type { NavItem } from '@/types';
 
 export const Sidebar = (): JSX.Element => {
@@ -56,9 +56,9 @@ export const Sidebar = (): JSX.Element => {
     : null;
 
   return (
-    <aside className="flex-shrink-0 flex h-full z-40 pointer-events-auto">
+    <aside className="flex-shrink-0 flex max-w-[21rem] h-full z-40 pointer-events-auto">
       {/* 主图标列（固定宽度栏） */}
-      <div className="flex flex-col items-center w-[92px] h-full pt-4 z-20 relative text-primary-600 border-r border-gray-300">
+      <div className="flex flex-col items-center w-[72px] h-full pt-4 z-20 relative text-primary-600 border-r border-gray-300">
         {/* 菜单切换按钮 */}
         <MenuToggleButton isSidebarCollapsed={isSidebarCollapsed} onToggle={handleToggle} />
 
@@ -103,7 +103,7 @@ export const Sidebar = (): JSX.Element => {
         </div>
 
         {/* 通知和账户（底部） */}
-        <div className="my-2 mb-4 w-full flex flex-col items-center gap-4">
+        <div className="my-2 mb-4 w-full flex flex-col items-center gap-2">
           <NotificationButton />
           <UserProfile />
         </div>

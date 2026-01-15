@@ -1,5 +1,5 @@
 /**
- * Projects Page Translations
+ * 项目页面翻译
  */
 export const projects = {
   title: 'Projects',

@@ -6,3 +6,5 @@
 export * from './app';
 export * from './countries';
 export * from './navigation';
+export * from './userProfile';
+export * from './exifTags';

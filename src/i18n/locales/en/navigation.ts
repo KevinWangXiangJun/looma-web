@@ -1,12 +1,12 @@
 export const navigation = {
-  // Main navigation items
+  // 主导航菜单项
   home: 'Home',
   tools: 'Tools',
   projects: 'Projects',
   brands: 'Brands',
   gallery: 'Gallery',
   
-  // More menu items
+  // 更多菜单项
   tasks: 'Tasks',
   templates: 'Templates',
   apps: 'Apps',
@@ -14,10 +14,10 @@ export const navigation = {
   marketingStudio: 'Marketing Studio',
   designSchool: 'Design School',
   
-  // Create button
+  // 创建按钮
   create: 'Create',
   
-  // Common
+  // 通用
   more: 'More',
   help: 'Help',
   settings: 'Settings',

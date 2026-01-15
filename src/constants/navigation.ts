@@ -1,6 +1,6 @@
 import {
   Home,
-  CheckSquare,
+  ListTodo,
   Image,
   Wand2,
   Folder,
@@ -8,7 +8,7 @@ import {
   LayoutTemplate,
   Puzzle,
   Calendar,
-  PiggyBank,
+  Megaphone,
   BookOpen,
 } from 'lucide-react';
 import type { NavItem } from '@/types';
@@ -64,7 +64,7 @@ export const getMoreNavItems = (t: TFunction): NavItem[] => [
   {
     id: 'tasks',
     label: t('navigation.tasks') || 'Tasks',
-    icon: CheckSquare,
+    icon: ListTodo,
     path: '/tasks',
     description: t('navSubtitles.tasks') || 'View and manage your tasks',
   },
@@ -92,7 +92,7 @@ export const getMoreNavItems = (t: TFunction): NavItem[] => [
   {
     id: 'marketingStudio',
     label: t('navigation.marketingStudio') || 'Marketing Studio',
-    icon: PiggyBank,
+    icon: Megaphone,
     path: '/marketingStudio',
     description: t('navSubtitles.marketingStudio') || 'Marketing tools and resources',
   },

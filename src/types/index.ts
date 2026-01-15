@@ -7,3 +7,4 @@ export * from './common';
 export * from './navigation';
 export * from './tools';
 export * from './files';
+export * from './userProfile';

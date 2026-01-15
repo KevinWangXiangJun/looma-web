@@ -1,23 +1,23 @@
 /**
- * Unified Input Component Styling Guide
+ * 统一输入组件样式指南
  * 
- * This file provides standardized styling patterns for all input components
- * in the Looma project, ensuring visual consistency across the application.
+ * 本文件为 Looma 项目中的所有输入组件提供标准化样式规范，
+ * 确保应用程序中的视觉一致性。
  * 
- * Standard Color Scheme:
- * - Primary: Purple (primary-600)
- * - Error: Red (red-500)
- * - Disabled: Gray (gray-200 / gray-100)
+ * 标准色彩方案：
+ * - 主色：紫色 (primary-600)
+ * - 错误：红色 (red-500)
+ * - 禁用：灰色 (gray-200 / gray-100)
  */
 
 /**
- * Base Input Classes
- * Use these as the foundation for all input styling
+ * 基础输入类
+ * 将这些类作为所有输入样式的基础
  */
 export const INPUT_STYLES = {
   /**
-   * Default state - normal, uninteracted input
-   * Apply these classes to all inputs as baseline
+   * 默认状态 - 正常、未交互的输入
+   * 将这些类应用于所有输入作为基线
    */
   base: [
     'flex h-10 w-full min-w-0 rounded border px-3 py-1 text-base outline-none',
@@ -27,8 +27,8 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Hover state - user hovers over input (not focused)
-   * Subtle visual feedback to indicate interactivity
+   * 悬停状态 - 用户悬停在输入上（未聚焦）
+   * 微妙的视觉反馈，表示可交互性
    */
   hover: [
     'hover:border-gray-400',
@@ -36,9 +36,9 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Focus state - input is focused (active)
-   * Clear visual indication of focus with primary color
-   * Recommended primary color: primary-600
+   * 聚焦状态 - 输入被聚焦（活跃）
+   * 通过主色清晰显示焦点
+   * 推荐的主色：primary-600
    */
   focus: [
     'focus:border-primary-500',
@@ -49,8 +49,8 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Disabled state - input is disabled/read-only
-   * Visual indication that input cannot be interacted with
+   * 禁用状态 - 输入被禁用/只读
+   * 表示输入无法交互
    */
   disabled: [
     'disabled:opacity-60',
@@ -60,9 +60,9 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Error state - validation error
-   * Red color scheme to indicate error
-   * Apply in addition to base classes when error exists
+   * 错误状态 - 验证错误
+   * 红色方案表示错误
+   * 当存在错误时，在基础类的基础上应用
    */
   error: [
     'border-red-500',
@@ -75,8 +75,8 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Success state - validation success (optional)
-   * Green color scheme to indicate success
+   * 成功状态 - 验证成功（可选）
+   * 绿色方案表示成功
    */
   success: [
     'border-green-500',
@@ -87,7 +87,7 @@ export const INPUT_STYLES = {
   ].join(' '),
 
   /**
-   * Dark mode adjustments (optional)
+   * 深色模式调整（可选）
    */
   dark: [
     'dark:bg-slate-900',
@@ -100,13 +100,13 @@ export const INPUT_STYLES = {
 };
 
 /**
- * Combined Style Presets
- * Ready-to-use combinations for common scenarios
+ * 组合样式预设
+ * 为常见场景准备的即用型组合
  */
 export const INPUT_PRESETS = {
   /**
-   * Standard input - default + hover + focus + disabled
-   * Use this for most input fields
+   * 标准输入 - 默认 + 悬停 + 聚焦 + 禁用
+   * 用于大多数输入字段
    */
   standard: [
     INPUT_STYLES.base,
@@ -116,8 +116,8 @@ export const INPUT_PRESETS = {
   ].join(' '),
 
   /**
-   * Error input - with error styling
-   * Use this when displaying validation errors
+   * 错误输入 - 带错误样式
+   * 显示验证错误时使用
    */
   errorState: [
     INPUT_STYLES.base,
@@ -126,8 +126,8 @@ export const INPUT_PRESETS = {
   ].join(' '),
 
   /**
-   * Success input - with success styling
-   * Use this when displaying validation success
+   * 成功输入 - 带成功样式
+   * 显示验证成功时使用
    */
   successState: [
     INPUT_STYLES.base,
@@ -136,7 +136,7 @@ export const INPUT_PRESETS = {
   ].join(' '),
 
   /**
-   * Compact input - smaller padding for inline usage
+   * 紧凑输入 - 内联使用的较小内边距
    */
   compact: [
     'flex h-8 w-full min-w-0 rounded border px-2 py-0.5 text-sm outline-none',
@@ -148,7 +148,7 @@ export const INPUT_PRESETS = {
   ].join(' '),
 
   /**
-   * Large input - larger padding for prominent fields
+   * 大输入 - 突出字段的较大内边距
    */
   large: [
     'flex h-12 w-full min-w-0 rounded border px-4 py-2 text-base outline-none',
@@ -161,48 +161,48 @@ export const INPUT_PRESETS = {
 };
 
 /**
- * Implementation Guidelines
+ * 实现指南
  * 
- * 1. Basic Input (no error):
+ * 1. 基础输入（无错误）：
  *    className={cn(INPUT_PRESETS.standard, customClasses)}
  * 
- * 2. Input with Error:
+ * 2. 带错误的输入：
  *    className={cn(error ? INPUT_PRESETS.errorState : INPUT_PRESETS.standard)}
  * 
- * 3. Input with Success:
+ * 3. 带成功的输入：
  *    className={cn(isValid ? INPUT_PRESETS.successState : INPUT_PRESETS.standard)}
  * 
- * 4. Custom Color Override (non-standard):
- *    If you need a different primary color (e.g., blue instead of purple):
- *    Replace focus classes with: focus:border-blue-500 focus:ring-blue-100
+ * 4. 自定义颜色覆盖（非标准）：
+ *    如果需要不同的主色（例如蓝色而非紫色）：
+ *    替换焦点类为：focus:border-blue-500 focus:ring-blue-100
  * 
- * 5. Combining with Tailwind Classes:
+ * 5. 与 Tailwind 类组合：
  *    className={cn(
  *      INPUT_PRESETS.standard,
- *      'max-w-xs',  // custom size constraints
- *      'text-lg',   // custom text size
- *      'rounded-lg' // custom border radius
+ *      'max-w-xs',  // 自定义大小约束
+ *      'text-lg',   // 自定义文本大小
+ *      'rounded-lg' // 自定义边框半径
  *    )}
  * 
- * Key Principles:
- * - Always use INPUT_PRESETS.standard as the base
- * - Use error/success states conditionally
- * - Never hardcode individual hover/focus classes
- * - Keep primary color consistent (primary-600)
- * - Maintain ring-[color]/100 for focus states
- * - Use cn() utility for combining classes
+ * 关键原则：
+ * - 始终使用 INPUT_PRESETS.standard 作为基础
+ * - 条件性使用错误/成功状态
+ * - 不要硬编码单个悬停/聚焦类
+ * - 保持主色一致（primary-600）
+ * - 为焦点状态维护 ring-[color]/100
+ * - 使用 cn() 工具组合类
  */
 
 /**
- * Color Palette Reference
+ * 颜色调色板参考
  * 
- * Primary (Focus): primary-500, primary-600, primary-100 (ring)
- * Error: red-500, red-600, red-100 (ring)
- * Success: green-500, green-600, green-100 (ring)
- * Neutral (Border): gray-300, gray-400, gray-200
- * Disabled: gray-100, gray-200, opacity-60
+ * 主色（焦点）：primary-500, primary-600, primary-100（环）
+ * 错误：red-500, red-600, red-100（环）
+ * 成功：green-500, green-600, green-100（环）
+ * 中性（边框）：gray-300, gray-400, gray-200
+ * 禁用：gray-100, gray-200, opacity-60
  * 
- * Standard Ring Width: 2px (ring-2)
- * Border Width: 1px (default)
- * Transition: duration-200
+ * 标准环宽：2px (ring-2)
+ * 边框宽：1px（默认）
+ * 过渡：duration-200
  */

@@ -30,8 +30,8 @@ export interface ExifInfo {
   dateTime?: string; // 拍摄时间
   dateTimeOriginal?: string; // 原始拍摄时间
   exposureTime?: string; // 曝光时间
-  fNumber?: string; // f数
-  iso?: string; // ISO 值
+  fNumber?: string; // f 数值
+  iso?: string; // ISO 感光度
   focalLength?: string; // 焦距
 
   // GPS 信息
@@ -62,57 +62,80 @@ export function parseExifData(exifData: any): ExifInfo {
 
   if (!exifData) return info;
 
-  // 解析 0th IFD (主要信息)
-  const ifd0 = exifData['0th'] || {};
+  try {
+    // 0th IFD (主图像信息)
+    const ifd0 = exifData['0th'] || {};
 
-  // 相机信息
-  if (ifd0[271]) info.make = ifd0[271];
-  if (ifd0[272]) info.model = ifd0[272];
-  if (ifd0[305]) info.software = ifd0[305];
+    // 遍历 0th 中的所有条目
+    for (const key in ifd0) {
+      const keyNum = parseInt(key);
+      const value = ifd0[key];
 
-  // 拍摄时间
-  if (ifd0[306]) info.dateTime = ifd0[306];
-  if (ifd0[274]) info.orientation = ifd0[274];
-  if (ifd0[282]) info.xResolution = `${ifd0[282][0][0]}/${ifd0[282][0][1]}`;
-  if (ifd0[283]) info.yResolution = `${ifd0[283][0][0]}/${ifd0[283][0][1]}`;
-
-  // 解析 Exif IFD
-  const exifIfd = exifData['Exif'] || {};
-
-  if (exifIfd[36867]) info.dateTimeOriginal = exifIfd[36867];
-  if (exifIfd[33434]) {
-    const exposure = exifIfd[33434];
-    info.exposureTime = `${exposure[0][0]}/${exposure[0][1]}`;
-  }
-  if (exifIfd[33437]) {
-    const fNumber = exifIfd[33437];
-    info.fNumber = `f/${(fNumber[0][0] / fNumber[0][1]).toFixed(1)}`;
-  }
-  if (exifIfd[34855]) info.iso = exifIfd[34855];
-  if (exifIfd[37386]) {
-    const focalLength = exifIfd[37386];
-    info.focalLength = `${(focalLength[0][0] / focalLength[0][1]).toFixed(1)}mm`;
-  }
-
-  // 解析 GPS 信息
-  const gpsIfd = exifData['GPS'] || {};
-  if (gpsIfd[2] && gpsIfd[4]) {
-    const latitude = convertGPSToDecimal(gpsIfd[2]);
-    const longitude = convertGPSToDecimal(gpsIfd[4]);
-    const latitudeRef = gpsIfd[1] || 'N';
-    const longitudeRef = gpsIfd[3] || 'E';
-
-    info.gps = {
-      latitude: latitudeRef === 'S' ? -latitude : latitude,
-      longitude: longitudeRef === 'W' ? -longitude : longitude,
-      latitudeRef,
-      longitudeRef,
-    };
-
-    if (gpsIfd[6]) {
-      const altitude = gpsIfd[6];
-      info.gpsAltitude = altitude[0][0] / altitude[0][1];
+      // 标准标签
+      if (keyNum === 271) info.make = String(value);
+      if (keyNum === 272) info.model = String(value);
+      if (keyNum === 274) info.orientation = value;
+      if (keyNum === 305) info.software = String(value);
+      if (keyNum === 306) info.dateTime = String(value);
+      if (keyNum === 282) info.xResolution = String(value);
+      if (keyNum === 283) info.yResolution = String(value);
+      
+      // 非标准标签 - 可能包含有用的信息
+      if (keyNum === 34605 && !info.make) {
+        // 如果没有标准品牌标签，尝试使用非标准的
+        info.make = String(value);
+      }
     }
+
+    // Exif IFD (拍摄信息)
+    const exifIfd = exifData['Exif'] || {};
+
+    // 遍历 Exif 中的所有条目
+    for (const key in exifIfd) {
+      const keyNum = parseInt(key);
+      const value = exifIfd[key];
+      
+      // 标准标签
+      if (keyNum === 36867) info.dateTimeOriginal = String(value);
+      if (keyNum === 33434) info.exposureTime = String(value);
+      if (keyNum === 33437) info.fNumber = String(value);
+      if (keyNum === 34855) info.iso = String(value);
+      if (keyNum === 37386) info.focalLength = String(value);
+    }
+
+    // GPS IFD
+    const gpsIfd = exifData['GPS'] || {};
+    
+    // 检查 GPS 是否有数据
+    if (Object.keys(gpsIfd).length > 0) {
+      // GPS 2 = Latitude, GPS 4 = Longitude
+      if (gpsIfd[2] && gpsIfd[4]) {
+        try {
+          const latitude = convertGPSToDecimal(gpsIfd[2]);
+          const longitude = convertGPSToDecimal(gpsIfd[4]);
+          const latitudeRef = gpsIfd[1] || 'N';
+          const longitudeRef = gpsIfd[3] || 'E';
+
+          info.gps = {
+            latitude: latitudeRef === 'S' ? -latitude : latitude,
+            longitude: longitudeRef === 'W' ? -longitude : longitude,
+            latitudeRef,
+            longitudeRef,
+          };
+
+          if (gpsIfd[6]) {
+            const altitude = gpsIfd[6];
+            info.gpsAltitude = Array.isArray(altitude) && altitude[0]
+              ? altitude[0][0] / altitude[0][1]
+              : altitude;
+          }
+        } catch (err) {
+          // GPS 解析失败，忽略
+        }
+      }
+    }
+  } catch (err) {
+    // EXIF 解析失败，返回已有数据
   }
 
   return info;
@@ -127,27 +150,29 @@ export async function extractExifFromImage(file: File): Promise<ExifInfo> {
 
     reader.onload = () => {
       try {
-        const data = reader.result as string;
+        const arrayBuffer = reader.result as ArrayBuffer;
         
-        // 移除 Data URL 前缀以提取纯 Base64
-        const base64String = data.split(',')[1] || data;
+        // 将 ArrayBuffer 转换为 Uint8Array，然后转换为二进制字符串
+        const uint8Array = new Uint8Array(arrayBuffer);
+        let binaryString = '';
+        for (let i = 0; i < uint8Array.length; i++) {
+          binaryString += String.fromCharCode(uint8Array[i]);
+        }
         
         // 使用 piexifjs 解析 EXIF 数据
         let exifData: any;
         try {
-          exifData = piexifjs.load(base64String);
-        } catch {
-          // 如果直接加载失败，尝试用完整的 Data URL
-          exifData = piexifjs.load(data);
+          exifData = piexifjs.load(binaryString);
+        } catch (parseError) {
+          // 如果解析失败，返回空对象
+          resolve({});
+          return;
         }
         
         const exifInfo = parseExifData(exifData);
-        console.log('Extracted EXIF info:', exifInfo);
-        
         resolve(exifInfo);
       } catch (error) {
-        // 如果 EXIF 解析失败（例如，图片没有 EXIF 数据），返回空对象
-        console.warn('EXIF parsing failed:', error);
+        // 如果处理失败（例如，图片没有 EXIF 数据），返回空对象
         resolve({});
       }
     };
@@ -156,7 +181,8 @@ export async function extractExifFromImage(file: File): Promise<ExifInfo> {
       reject(new Error('Failed to read file'));
     };
 
-    reader.readAsDataURL(file);
+    // 读取为 ArrayBuffer 而不是 DataURL
+    reader.readAsArrayBuffer(file);
   });
 }
 
@@ -167,7 +193,7 @@ export async function removeExifFromImage(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = () => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -226,4 +252,23 @@ export function downloadCleanedImage(blob: Blob, originalFileName: string) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+/**
+ * 检查 EXIF 信息中是否包含隐私数据
+ * 隐私数据包括：GPS 位置、设备信息、拍摄时间
+ */
+export function hasPrivacyData(exifInfo: ExifInfo | null): boolean {
+  if (!exifInfo) return false;
+
+  // 检查 GPS 数据
+  if (exifInfo.gps) return true;
+
+  // 检查设备信息
+  if (exifInfo.make || exifInfo.model) return true;
+
+  // 检查拍摄时间
+  if (exifInfo.dateTimeOriginal || exifInfo.dateTime) return true;
+
+  return false;
 }

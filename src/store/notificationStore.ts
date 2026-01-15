@@ -15,7 +15,7 @@ interface NotificationState {
   isLoading: boolean;
   isOpen: boolean;
 
-  // Actions
+  // 操作方法
   addNotification: (notification: Notification) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
@@ -23,7 +23,7 @@ interface NotificationState {
   clearNotifications: () => void;
   setIsOpen: (isOpen: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
-  // TODO: Implement API integration
+  // TODO: 实现 API 集成
   // fetchNotifications: () => Promise<void>;
 }
 

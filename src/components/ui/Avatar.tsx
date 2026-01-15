@@ -57,7 +57,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
 
     // 边框样式：showBorder为true时才显示边框
     const borderClass = showBorder 
-      ? (isSelected ? 'border-4 border-primary-500' : 'border-4 border-white')
+      ? (isSelected ? 'border-4 border-primary-500' : 'border-4 border-gray-200')
       : '';
 
     return (
@@ -65,7 +65,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         ref={ref}
         style={getSizeStyle()}
         className={cn(
-          'inline-flex items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white font-semibold shadow-md',
+          'inline-flex items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white font-semibold',
           getSizeClass(),
           borderClass,
           className

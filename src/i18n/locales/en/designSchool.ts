@@ -1,5 +1,5 @@
 /**
- * Design School Page Translations
+ * Design School 页面翻译
  */
 export const designSchool = {
   title: 'Design School',

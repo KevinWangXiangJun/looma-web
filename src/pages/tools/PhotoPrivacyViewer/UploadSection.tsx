@@ -16,10 +16,10 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onFileSelect }) =>
   const { t } = useTranslation();
 
   return (
-    <Card className="p-6">
+    <Card className="p-4">
       {/* 标题 + 上传/图库按钮 */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">{t('tools.photoPrivacyCleaner.selectPhoto', '选择要清理的照片')}</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-gray-900">{t('tools.photoPrivacyViewer.selectPhoto', '上传照片检查隐私信息')}</h2>
         <div className="flex gap-3">
           <button
             onClick={() => {
@@ -29,25 +29,25 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onFileSelect }) =>
             className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm rounded-lg transition-colors"
           >
             <Upload className="w-4 h-4" />
-            {t('tools.photoPrivacyCleaner.uploadBtn', '上传')}
+            {t('tools.photoPrivacyViewer.uploadBtn', '上传')}
           </button>
           <button
             className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 bg-gray-50 hover:bg-gray-200 font-medium text-sm rounded-lg transition-colors"
           >
             <ImageIcon className="w-4 h-4" />
-            {t('tools.photoPrivacyCleaner.galleryBtn', '图库')}
+            {t('tools.photoPrivacyViewer.galleryBtn', '图库')}
           </button>
         </div>
       </div>
 
       {/* FileUpload 组件 */}
       <FileUpload
-        accept="image/*"
+        accept=".png,.jpg,.jpeg,.bmp,image/png,image/jpeg,image/bmp"
         multiple={false}
         onFileSelect={onFileSelect}
-        title={t('tools.photoPrivacyCleaner.selectPhotoTitle', '选择要清理的照片')}
-        description={t('tools.photoPrivacyCleaner.selectPhotoDesc', '拖拽或点击选择包含隐私信息的照片')}
-        supportedFormats={t('tools.photoPrivacyCleaner.supportedFormats', 'PNG、JPG、JPEG、BMP')}
+        title={t('tools.photoPrivacyViewer.selectPhotoTitle', '检查照片隐私信息')}
+        description={t('tools.photoPrivacyViewer.selectPhotoDesc', '拖拽或点击选择照片，查看是否包含 GPS 位置、设备信息或拍摄时间')}
+        supportedFormats={t('tools.photoPrivacyViewer.supportedFormats', 'PNG、JPG、JPEG、BMP')}
         maxSize={50 * 1024 * 1024}
       />
     </Card>

@@ -1,5 +1,5 @@
 /**
- * Apps Page Translations
+ * 应用页面翻译
  */
 export const apps = {
   title: 'Apps',

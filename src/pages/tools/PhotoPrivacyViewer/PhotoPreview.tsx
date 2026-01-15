@@ -11,8 +11,8 @@ interface PhotoPreviewProps {
 
 export const PhotoPreview: React.FC<PhotoPreviewProps> = ({ image }) => {
   return (
-    <Card className="p-6 sticky top-6">
-      <h3 className="font-semibold text-gray-900 mb-4">原始图片</h3>
+    <Card className="p-4 sticky">
+      <h3 className="font-semibold text-md text-gray-900 mb-4">原始图片</h3>
       {image ? (
         <img
           src={image}

@@ -1,5 +1,5 @@
 /**
- * Tools Page Translations
+ * 工具页面翻译
  */
 export const tools = {
   title: 'Total tools',
@@ -25,15 +25,34 @@ export const tools = {
   step2Desc: 'Import the file you want to process',
   step3: 'Get Results',
   step3Desc: 'Download your file after processing is complete',
-  // Categories
+  // 分类
   categories: {
     privacy: 'Privacy',
     conversion: 'Conversion',
     'file-management': 'File Management',
   },
-  photoPrivacyCleaner: {
-    name: 'Photo Privacy Cleaner',
-    description: 'Clean privacy information from photos',
+  photoPrivacyViewer: {
+    name: 'Photo Privacy Viewer',
+    description: 'Check and clean privacy information from photos (GPS, device info, shooting time, etc.)',
+    feature1: 'Privacy Detection',
+    feature2: 'Local Secure Processing',
+    selectPhoto: 'Upload photo to check privacy info',
+    selectPhotoTitle: 'Check Photo Privacy Information',
+    selectPhotoDesc: 'Drag or click to select photos to check for GPS location, device info, or shooting time',
+    supportedFormats: 'PNG, JPG, JPEG, BMP',
+    // InfoCard 组件
+    platformPrivacy: 'Social Platform Privacy Guide',
+    privacyProtection: 'Privacy Protection',
+    localProcessing: 'Local Processing: All operations are performed in your browser',
+    noUpload: 'No Upload: Photo data will not be uploaded to any server',
+    noCaching: 'No Caching: Data is automatically cleared after page refresh',
+    // ExifInfoDisplay 组件
+    privacyTip: 'Privacy Protection Tips',
+    tip1: 'Social media usually automatically removes EXIF data',
+    tip2: 'Personal blogs or cloud storage may retain original data, please check first',
+    tip3: 'If privacy information is found, use this tool to clean it',
+    tip4: 'We plan to launch more privacy protection features, stay tuned',
+    // PhotoPrivacyViewer 组件相关
     photoInfoAndClean: 'Photo Info & Clean',
     processing: 'Processing...',
     cleanPrivacy: 'Clean Privacy',
@@ -42,30 +61,20 @@ export const tools = {
     imageFailed: 'Image processing failed',
     fileReadFailed: 'File read failed',
     imageCleanFailed: 'Image clean failed',
-    // UploadSection
-    selectPhoto: 'Select photo to clean',
+    // UploadSection 组件
     uploadBtn: 'Upload',
     galleryBtn: 'Gallery',
-    selectPhotoTitle: 'Select photo to clean',
-    selectPhotoDesc: 'Drag or click to select photos with privacy information',
-    supportedFormats: 'PNG, JPG, JPEG, BMP',
-    // PhotoInfo
+    // PhotoInfo 组件
     photoInfo: 'Photo Info',
     fileName: 'File Name',
     fileSize: 'File Size',
     format: 'Format',
     pixels: 'Pixels',
-    // InfoCard
-    aboutPhotoPrivacy: 'About Photo Privacy',
-    gpsData: 'GPS Data',
-    gpsDataDesc: 'Shows the exact location where the photo was taken',
-    deviceInfo: 'Device Info',
-    deviceInfoDesc: 'Includes camera brand, model and other personal identification info',
-    shootingTime: 'Shooting Time',
-    shootingTimeDesc: 'Records the date and time the photo was taken',
-    privacyProtection: 'Privacy Protection',
-    privacyProtectionDesc: 'This tool processes locally and does not upload data to servers',
-    // ExifInfoDisplay
+    // CleanedPhotoPreview 组件
+    cleanedPhoto: 'Cleaned Photo',
+    download: 'Download',
+    cleanedSuccess: 'All privacy information has been removed, image quality remains unchanged',
+    // EXIF 信息显示
     analyzingExif: 'Analyzing EXIF data...',
     noExifData: 'This image does not contain EXIF data',
     privacyWarning: 'Privacy Information Detected',
@@ -86,17 +95,45 @@ export const tools = {
     focalLength: 'Focal Length',
     aperture: 'Aperture',
     shutterSpeed: 'Shutter Speed',
-    // CleanedPhotoPreview
-    cleanedPhoto: 'Cleaned Photo',
-    download: 'Download',
-    cleanedSuccess: 'All privacy information has been removed, image quality remains unchanged',
+    noPrivacyData: 'Good news!',
+    noPrivacyDataDesc: 'This photo does not contain GPS location, device information, or shooting time and other privacy data, you can share it with confidence.',
+    // 隐私信息卡片
+    aboutPhotoPrivacy: 'Privacy Information in Photos',
+    gpsData: 'GPS Data',
+    gpsDataDesc: 'Shows the exact location where the photo was taken',
+    deviceInfo: 'Device Info',
+    deviceInfoDesc: 'Includes camera brand, model and other personal identification info',
+    shootingTime: 'Shooting Time',
+    shootingTimeDesc: 'Records the date and time the photo was taken',
+  },
+  imageWatermarkRemover: {
+    name: 'Image Watermark Remover',
+    description: 'Intelligently remove watermarks, text, and unnecessary elements from images',
+    feature1: 'AI Smart Detection',
+    feature2: 'One-click Removal',
+  },
+  faceMosaic: {
+    name: 'Face Recognition Mosaicing',
+    description: 'Automatically detect and mosaic faces and sensitive information in photos',
+    feature1: 'Smart Face Detection',
+    feature2: 'Auto Mosaicing',
+  },
+  imageCompress: {
+    name: 'Image Compress',
+    description: 'Compress images and remove detail information to protect privacy',
+    feature1: 'Efficient Compression',
+    feature2: 'Quality Preserved',
   },
   documentConverter: {
     name: 'Document Converter',
     description: 'Convert documents between different formats',
+    feature1: 'Multi-format Support',
+    feature2: 'Fast Conversion',
   },
   batchRenamer: {
     name: 'Batch Renamer',
     description: 'Rename multiple files at once',
+    feature1: 'Batch Processing',
+    feature2: 'Flexible Rules',
   },
 };

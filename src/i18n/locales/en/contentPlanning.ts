@@ -1,5 +1,5 @@
 /**
- * Content Planning Page Translations
+ * 内容规划页面翻译
  */
 export const contentPlanning = {
   title: 'Content Planning',

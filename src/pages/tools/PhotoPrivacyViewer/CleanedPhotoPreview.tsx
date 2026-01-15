@@ -25,7 +25,7 @@ export const CleanedPhotoPreview: React.FC<CleanedPhotoPreviewProps> = ({
           <div className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center">
             <Check className="w-4 h-4 text-white" />
           </div>
-          <h3 className="font-semibold text-gray-900 text-lg">{t('tools.photoPrivacyCleaner.cleanedPhoto', '清理后的图片')}</h3>
+          <h3 className="font-semibold text-gray-900 text-md">{t('tools.photoPrivacyViewer.cleanedPhoto', '清理后的图片')}</h3>
         </div>
         <div className="flex gap-2">
           <button
@@ -33,7 +33,7 @@ export const CleanedPhotoPreview: React.FC<CleanedPhotoPreviewProps> = ({
             className="flex items-center gap-2 px-3 py-1 text-sm text-white bg-green-600 hover:bg-green-700 font-medium rounded transition-colors"
           >
             <Download className="w-4 h-4" />
-            {t('tools.photoPrivacyCleaner.download', '下载')}
+            {t('tools.photoPrivacyViewer.download', '下载')}
           </button>
         </div>
       </div>
@@ -49,7 +49,7 @@ export const CleanedPhotoPreview: React.FC<CleanedPhotoPreviewProps> = ({
           <Check className="w-4 h-4 text-white" />
         </div>
         <p className="text-sm text-green-700">
-          {t('tools.photoPrivacyCleaner.cleanedSuccess', '所有隐私信息已被移除，图片质量保持不变')}
+          {t('tools.photoPrivacyViewer.cleanedSuccess', '所有隐私信息已被移除，图片质量保持不变')}
         </p>
       </div>
     </Card>

@@ -1,5 +1,5 @@
 /**
- * User Profile Page Translations
+ * 用户个人资料页面翻译
  */
 export const userProfile = {
   logout: 'Logout',

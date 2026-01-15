@@ -69,7 +69,7 @@ export const ToolsListPanel: React.FC<ToolsListPanelProps> = () => {
       </div>
 
       {/* 工具列表 */}
-      <div className="flex-1 overflow-y-auto space-y-2 px-4 pb-4">
+      <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-4">
         {filteredTools.length > 0 ? (
           filteredTools.map((tool) => {
             const isSelected = selectedToolId === tool.id;

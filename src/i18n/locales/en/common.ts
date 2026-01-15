@@ -16,7 +16,8 @@ export const common = {
   logout: 'Logout',
   settings: 'Settings',
   explore: 'Explore',
-  // Notification
+  startUsing: 'Start Using',
+  // 通知
   notifications: 'Notifications',
   markAllAsRead: 'Mark all as read',
   noNotifications: 'No notifications',
