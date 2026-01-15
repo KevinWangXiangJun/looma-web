@@ -27,7 +27,12 @@ export const NotificationButton = (): JSX.Element => {
           </div>
         </button>
       </PopoverTrigger>
-      <PopoverContent side="right" sideOffset={12} align="start" className="w-[25rem] p-0">
+      <PopoverContent 
+        side="right" 
+        sideOffset={12} 
+        align="start"
+        className="w-[25rem] p-0"
+      >
         <NotificationPanel />
       </PopoverContent>
     </Popover>

@@ -11,7 +11,7 @@ interface MoreNavButtonProps {
 
 /**
  * 更多导航按钮组件
- * 使用 HoverCard 展示额外的导航项，点击时在 ExpandedPanel 中展示
+ * 使用 HoverCard 展示额外的导航项，点击时在 SidebarPanel 中展示
  */
 export const MoreNavButton = ({ moreNavItems = [] }: MoreNavButtonProps): JSX.Element => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ export const MoreNavButton = ({ moreNavItems = [] }: MoreNavButtonProps): JSX.El
             isMoreButtonSelected ? 'text-primary-700' : 'text-primary-600'
           }`}
         >
-          <div className={`p-2 rounded-md flex items-center justify-center transition-all duration-200 ${
+          <div className={`p-2 rounded-lg flex items-center justify-center transition-all duration-200 ${
             isMoreButtonSelected 
               ? 'bg-primary-600/30 text-primary-600' 
               : 'text-primary-600 hover:bg-primary-600/20'
@@ -62,7 +62,7 @@ export const MoreNavButton = ({ moreNavItems = [] }: MoreNavButtonProps): JSX.El
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 px-2 py-2 rounded text-left text-sm text-primary-600 hover:bg-primary-600/20 transition-colors"
+                className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left text-sm text-primary-600 hover:bg-primary-600/20 transition-colors"
               >
                 <Icon size={16} className="flex-shrink-0" />
                 <span className="truncate">{t(item.label) || item.label}</span>

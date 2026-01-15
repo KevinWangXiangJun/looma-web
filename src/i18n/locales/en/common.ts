@@ -15,6 +15,7 @@ export const common = {
   confirm: 'Confirm',
   logout: 'Logout',
   settings: 'Settings',
+  explore: 'Explore',
   // Notification
   notifications: 'Notifications',
   markAllAsRead: 'Mark all as read',

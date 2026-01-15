@@ -15,6 +15,7 @@ export const common = {
   confirm: '确认',
   logout: '退出登录',
   settings: '设置',
+  explore: '探索',
   // 通知
   notifications: '通知',
   markAllAsRead: '全部标为已读',

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui';
 import { usePageTitle } from '@/hooks';
-import { Sparkles, Zap, Users, TrendingUp, BarChart3, Shield } from 'lucide-react';
+import { Sparkles, Zap, Users, TrendingUp, BarChart3, Shield, Check, Bot, Link2, Infinity, ArrowRight } from 'lucide-react';
 import { CreateDialog } from '@/pages/create/CreateDialog';
 
 /**
@@ -105,7 +105,7 @@ export function Home(): JSX.Element {
           <div className="grid md:grid-cols-3 gap-8">
             {/* 特性 1 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 hover:border-primary-300 hover:shadow-xl transition-all duration-300 group">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform"><Bot className="w-12 h-12 text-primary-600" /></div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 {t('home.features.feature1.title')}
               </h3>
@@ -113,13 +113,13 @@ export function Home(): JSX.Element {
                 {t('home.features.feature1.description')}
               </p>
               <div className="flex items-center text-primary-600 font-medium hover:translate-x-1 transition-transform">
-                {t('home.features.feature1.learnMore')} →
+                {t('home.features.feature1.learnMore')} <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </div>
 
             {/* 特性 2 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 group md:translate-y-4">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔗</div>
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform"><Link2 className="w-12 h-12 text-blue-600" /></div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 {t('home.features.feature2.title')}
               </h3>
@@ -127,21 +127,21 @@ export function Home(): JSX.Element {
                 {t('home.features.feature2.description')}
               </p>
               <div className="flex items-center text-blue-600 font-medium hover:translate-x-1 transition-transform">
-                {t('home.features.feature2.learnMore')} →
+                {t('home.features.feature2.learnMore')} <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </div>
 
             {/* 特性 3 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:border-cyan-300 hover:shadow-xl transition-all duration-300 group">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">∞</div>
+            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-xl transition-all duration-300 group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform"><Infinity className="w-12 h-12 text-green-600" /></div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 {t('home.features.feature3.title')}
               </h3>
               <p className="text-gray-600 leading-relaxed mb-4">
                 {t('home.features.feature3.description')}
               </p>
-              <div className="flex items-center text-cyan-600 font-medium hover:translate-x-1 transition-transform">
-                {t('home.features.feature3.learnMore')} →
+              <div className="flex items-center text-green-600 font-medium hover:translate-x-1 transition-transform">
+                {t('home.features.feature3.learnMore')} <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export function Home(): JSX.Element {
                   {plan.features.map((feature, fIdx) => (
                     <li key={fIdx} className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-md flex items-center justify-center ${idx === 1 ? 'bg-white/20' : 'bg-primary-100'}`}>
-                        <span className={`text-sm ${idx === 1 ? 'text-white' : 'text-primary-600'}`}>✓</span>
+                        <Check className={`w-4 h-4 ${idx === 1 ? 'text-white' : 'text-primary-600'}`} />
                       </div>
                       <span>{feature}</span>
                     </li>

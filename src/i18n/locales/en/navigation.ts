@@ -1,10 +1,10 @@
 export const navigation = {
   // Main navigation items
   home: 'Home',
+  tools: 'Tools',
   projects: 'Projects',
   brands: 'Brands',
   gallery: 'Gallery',
-  aiTools: 'AI Tools',
   
   // More menu items
   tasks: 'Tasks',
@@ -28,7 +28,7 @@ export const navSubtitles = {
   projects: 'Manage your projects',
   brands: 'Manage your brands',
   gallery: 'Browse your media gallery',
-  aiTools: 'Explore AI-powered tools',
+  tools: 'Manage your tools',
   tasks: 'View and manage your tasks',
   templates: 'Browse content templates',
   apps: 'Install and manage apps',

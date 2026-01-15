@@ -1,10 +1,10 @@
 export const navigation = {
   // Main navigation items
   home: '首页',
+  tools: '工具',
   projects: '项目',
   brands: '品牌',
   gallery: '图库',
-  aiTools: 'AI工具',
   
   // More menu items
   tasks: '任务',
@@ -28,7 +28,7 @@ export const navSubtitles = {
   projects: '管理您的项目',
   brands: '管理您的品牌',
   gallery: '浏览媒体库',
-  aiTools: '探索AI工具',
+  tools: '管理您的工具',
   tasks: '查看和管理任务',
   templates: '浏览内容模板',
   apps: '安装和管理应用',

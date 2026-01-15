@@ -17,7 +17,7 @@ export const MenuToggleButton = ({ isSidebarCollapsed, onToggle }: MenuToggleBut
       <HoverCardTrigger asChild>
         <button
           onClick={onToggle}
-          className="w-10 h-10 mb-4 flex items-center justify-center rounded text-primary-600 hover:bg-primary-100 hover:text-primary-700 transition-colors overflow-visible cursor-pointer"
+          className="w-10 h-10 mb-4 flex items-center justify-center rounded-lg text-primary-600 hover:bg-primary-600/20 transition-colors overflow-visible cursor-pointer"
         >
           {!isSidebarCollapsed ? (
             <MenuToggleIcon color="#9333ea" size={20} />

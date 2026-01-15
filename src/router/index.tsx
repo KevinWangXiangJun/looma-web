@@ -5,7 +5,7 @@ import Home from '@/pages/home';
 import Projects from '@/pages/projects';
 import Brands from '@/pages/brands';
 import Gallery from '@/pages/gallery';
-import AITools from '@/pages/aiTools';
+import Tools from '@/pages/tools';
 import Tasks from '@/pages/tasks';
 import Templates from '@/pages/templates';
 import Apps from '@/pages/apps';
@@ -65,12 +65,12 @@ function AppRoutes(): JSX.Element {
         }
       />
 
-      {/* AI工具页面 */}
+      {/* 工具页面 */}
       <Route
-        path="/aiTools"
+        path="/tools"
         element={
           <ProtectedRoute>
-            <AITools />
+            <Tools />
           </ProtectedRoute>
         }
       />

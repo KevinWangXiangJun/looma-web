@@ -14,7 +14,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }): JSX.Ele
       {/* 右侧：内容区域 */}
       <main className="flex-1 h-full overflow-hidden relative flex flex-col">
         <div className="flex-1 overflow-auto scroll-smooth pl-4 pt-2 pr-2 pb-2">
-          <div className="w-full rounded-md bg-white p-6 border border-gray-200">
+          <div className="w-full rounded-lg bg-white p-6 border border-gray-200">
             {children}
           </div>
         </div>

@@ -2,7 +2,7 @@ import {
   Home,
   CheckSquare,
   Image,
-  Sparkles,
+  Wand2,
   Folder,
   Palette,
   LayoutTemplate,
@@ -27,6 +27,13 @@ export const getNavItems = (t: TFunction): NavItem[] => [
     description: t('navSubtitles.home') || 'Manage your home page',
   },
   {
+    id: 'tools',
+    label: t('navigation.tools') || 'Tools',
+    icon: Wand2,
+    path: '/tools',
+    description: t('navSubtitles.tools') || 'Manage your tools',
+  },
+  {
     id: 'projects',
     label: t('navigation.projects') || 'Projects',
     icon: Folder,
@@ -46,13 +53,6 @@ export const getNavItems = (t: TFunction): NavItem[] => [
     icon: Image,
     path: '/gallery',
     description: t('navSubtitles.gallery') || 'Browse your media gallery',
-  },
-  {
-    id: 'aiTools',
-    label: t('navigation.aiTools') || 'AI Tools',
-    icon: Sparkles,
-    path: '/aiTools',
-    description: t('navSubtitles.aiTools') || 'Explore AI-powered tools',
   },
 ];
 

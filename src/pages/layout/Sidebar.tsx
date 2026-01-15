@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '@/store';
 import { getNavItems, getMoreNavItems } from '@/constants/navigation';
 import { UserProfile } from '@/pages/userProfile/UserProfile';
 import { NotificationButton } from '@/pages/notification/NotificationButton';
-import { ExpandedPanel } from './ExpandedPanel';
+import { SidebarPanel } from './SidebarPanel';
 import { MenuToggleButton } from './MenuToggleButton';
 import { CreateButton } from '@/pages/create/CreateButton';
 import { MoreNavButton } from './MoreNavButton';
+import { getSidebarPanelContent } from './sidebarPanelContent';
 import type { NavItem } from '@/types';
 
 export const Sidebar = (): JSX.Element => {
@@ -32,6 +33,14 @@ export const Sidebar = (): JSX.Element => {
   // 如果 store 中的 activeItem 未设置或需要更新（基于 URL），则使用 currentActiveItem
   const displayActiveItem = activeItem || currentActiveItem;
 
+  // 初始化：根据当前 URL 路径设置 activeItem
+  // 只在组件挂载时执行一次，避免每次渲染都重新设置
+  useEffect(() => {
+    if (!activeItem && navItems.length > 0 && currentActiveItem) {
+      setActiveItem(currentActiveItem);
+    }
+  }, []); // 空依赖数组表示仅在挂载时执行一次
+
   const handleToggle = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -41,8 +50,13 @@ export const Sidebar = (): JSX.Element => {
     if (item.path) navigate(item.path);
   };
 
+  // 获取当前导航项对应的 SidebarPanel 内容组件
+  const ContentComponent = displayActiveItem?.id 
+    ? getSidebarPanelContent(displayActiveItem.id)
+    : null;
+
   return (
-    <aside className="flex-shrink-0 flex h-full z-40 shadow-xl pointer-events-auto">
+    <aside className="flex-shrink-0 flex h-full z-40 pointer-events-auto">
       {/* 主图标列（固定宽度栏） */}
       <div className="flex flex-col items-center w-[92px] h-full pt-4 z-20 relative text-primary-600 border-r border-gray-300">
         {/* 菜单切换按钮 */}
@@ -66,7 +80,7 @@ export const Sidebar = (): JSX.Element => {
                 onClick={() => handleNavItemClick(item)}
                 className={`py-2 flex flex-col items-center gap-1 relative cursor-pointer`}
               >
-                <div className={`p-2 rounded-md flex items-center justify-center transition-all duration-200 ${isActive ? 'bg-primary-600/30 text-primary-600' : 'text-primary-600 hover:bg-primary-600/20'}`}>
+                <div className={`p-2 rounded-lg flex items-center justify-center transition-all duration-200 ${isActive ? 'bg-primary-600/30 text-primary-600' : 'text-primary-600 hover:bg-primary-600/20'}`}>
                   <Icon
                     size={20}
                     className={`
@@ -89,17 +103,17 @@ export const Sidebar = (): JSX.Element => {
         </div>
 
         {/* 通知和账户（底部） */}
-        <div className="my-2 w-full flex flex-col items-center gap-4">
+        <div className="my-2 mb-4 w-full flex flex-col items-center gap-4">
           <NotificationButton />
           <UserProfile />
         </div>
       </div>
 
       {/* 展开面板（动态内容） */}
-      <ExpandedPanel
+      <SidebarPanel
         isSidebarCollapsed={isSidebarCollapsed}
         activeItem={displayActiveItem}
-        ContentComponent={() => <div>Content</div>}
+        ContentComponent={ContentComponent}
       />
     </aside>
   );

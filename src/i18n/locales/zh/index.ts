@@ -7,7 +7,7 @@ import { brands } from './brands';
 import { tasks } from './tasks';
 import { gallery } from './gallery';
 import { templates } from './templates';
-import { aiTools } from './aiTools';
+import { tools } from './tools';
 import { apps } from './apps';
 import { contentPlanning } from './contentPlanning';
 import { marketingStudio } from './marketingStudio';
@@ -25,7 +25,7 @@ export const zh = {
   tasks,
   gallery,
   templates,
-  aiTools,
+  tools,
   apps,
   contentPlanning,
   marketingStudio,

@@ -68,8 +68,8 @@ export const NotificationPanel = (): JSX.Element => {
                     markAsRead(notification.id);
                   }
                 }}
-                className={`px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer ${
-                  !notification.isRead ? 'bg-blue-50' : ''
+                className={`px-4 py-3 hover:bg-gray-100 transition-colors cursor-pointer ${
+                  !notification.isRead ? 'bg-blue-100' : ''
                 }`}
               >
                 <div className="flex gap-3">
