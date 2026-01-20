@@ -22,4 +22,5 @@ export interface GalleryImage {
 export interface GalleryFilters {
   types: string[];                    // 过滤的格式 ['all'|'jpg'|'png'|...]
   search?: string;                    // 搜索关键词（可选）
+  category?: 'all' | 'recent' | 'favorites' | 'downloads' | 'trash'; // 相册分类
 }

@@ -8,7 +8,7 @@ import { usePageTitle } from '@/hooks';
 import { Card } from '@/components/ui/Card';
 import { FolderOpen, Loader2 } from 'lucide-react';
 import { getGridColumns } from '@/utils/galleryUtils';
-import { GALLERY_IMAGE_MIN_WIDTH, GALLERY_GAP } from '@/constants/gallery';
+import { GALLERY_IMAGE_MIN_WIDTH, GALLERY_GAP, INFINITE_SCROLL_ROOT_MARGIN, INFINITE_SCROLL_THRESHOLD } from '@/constants/gallery';
 
 export function Gallery(): JSX.Element {
   usePageTitle('navigation.gallery');
@@ -95,7 +95,7 @@ export function Gallery(): JSX.Element {
            loadImagesRef.current();
         }
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { threshold: INFINITE_SCROLL_THRESHOLD, rootMargin: INFINITE_SCROLL_ROOT_MARGIN }
     );
 
     observer.observe(loadMoreRef.current);

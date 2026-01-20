@@ -16,7 +16,7 @@ interface GalleryGridProps {
 export const GalleryGridView = forwardRef<
   HTMLDivElement,
   GalleryGridProps
->(({ renderedVisibleImages, columns: propsColumns, itemWidth: propsItemWidth }) => {
+>(({ renderedVisibleImages, columns: propsColumns, itemWidth: propsItemWidth }, ref) => {
   const { 
     images, 
     isLoading,
@@ -64,6 +64,7 @@ export const GalleryGridView = forwardRef<
 
   return (
     <div 
+      ref={ref}
       className="w-full min-h-full"
       style={{ opacity: 1 }}
     >

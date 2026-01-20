@@ -35,21 +35,25 @@ export const CountrySelect = ({ country = '+86', onCountryChange }: CountrySelec
 
   return (
     <Select value={selectValue} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-[100px] h-10 bg-gray-50 border border-gray-300 rounded px-3 py-1 flex-shrink-0 focus:ring-0 focus:border-gray-300 focus:ring-offset-0">
+      <SelectTrigger className="w-[100px] h-10 bg-gray-50 border border-gray-300 rounded-lg px-3 py-1 flex-shrink-0 focus:ring-0 focus:border-gray-300 focus:ring-offset-0">
         <span className="truncate">{selectedCountry?.phoneCode}</span>
       </SelectTrigger>
 
-      <SelectContent className="max-h-[226px]">
-        {COUNTRIES.map((c: CountryOption) => (
-          <SelectItem
-            key={c.countryCode}
-            value={c.countryCode}
-            className="flex items-center justify-between py-2 pr-3 text-gray-900"
-          >
-            <span>{c.countryName}</span>
-            <span className="ml-2">{c.phoneCode}</span>
-          </SelectItem>
-        ))}
+      <SelectContent className="max-h-[226px] rounded-lg">
+        {COUNTRIES.map((c: CountryOption) => {
+          const isSelected = selectValue === c.countryCode;
+          return (
+            <SelectItem
+              key={c.countryCode}
+              value={c.countryCode}
+              className={`flex items-center justify-between py-2 pr-3 ${isSelected ? 'bg-primary-500 focus:bg-primary-600 data-[state=checked]:text-white' : 'text-gray-900'}`}
+              showCheckmark={false}
+            >
+              <span>{c.countryName}</span>
+              <span className="text-sm truncate ml-2">{c.phoneCode}</span>
+            </SelectItem>
+          )
+        })}
       </SelectContent>
     </Select>
   );

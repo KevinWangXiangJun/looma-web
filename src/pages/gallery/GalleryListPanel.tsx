@@ -1,5 +1,10 @@
 import { Image, Clock, Heart, Trash2, Download, UploadCloud, LucideIcon } from 'lucide-react';
 import { useGalleryStore } from '@/store/galleryStore';
+import { GALLERY_COLLECTIONS } from '@/constants/gallery';
+
+const iconMap: Record<string, LucideIcon> = {
+  Image, Clock, Heart, Trash2, Download
+};
 
 interface SidebarItem {
   id: string;
@@ -16,29 +21,47 @@ interface GallerySidebarProps {
 
 export const GalleryListPanel = ({
   className = '',
-  onSelect,
-  selectedId = 'all',
-}: GallerySidebarProps) => {
+  // onSelect, 
+  // selectedId = 'all', 
+}: GallerySidebarProps & { [key: string]: any }) => {
   const images = useGalleryStore((state) => state.images);
   const downloads = useGalleryStore((state) => state.downloads);
   const total = useGalleryStore((state) => state.total);
+  
+  // 新增：从 Store 获取过滤状态和操作
+  const filters = useGalleryStore((state) => state.filters);
+  const setFilters = useGalleryStore((state) => state.setFilters);
+  const loadImages = useGalleryStore((state) => state.loadImages);
+
+  // 当前选中的分类
+  const selectedId = filters.category || 'all';
+
+  // 处理点击事件
+  const handleSelect = (id: string) => {
+    if (selectedId === id) return;
+    
+    // 更新 Store 中的过滤条件
+    setFilters({ ...filters, category: id as any });
+    // 强制刷新列表
+    loadImages(true);
+  };
 
   // 计算各类别的数量
+  // 注意：在真实应用中，这些统计数据应该由独立的 API 通过 dashboardStore 或 galleryStore 的 meta 信息返回
+  // 目前因为是本地分页加载，images 数组只包含当前页或已加载的数据，不能准确代表总数
+  // 但为了不破坏现有逻辑，我们暂时根据 store.total 来显示当前选中类别的总数
+  // 其他类别的数量在未选中时可能不准确 (TODO: 完善统计接口)
   const favoritesCount = images.filter(img => img.isFavorited).length;
   const trashCount = images.filter(img => img.isDeleted).length;
   const downloadCount = downloads.length;
-  
-  // 最近上传：统计所有加载的图片中最近上传的数量
-  // 这里简化为：已加载的全部图片数（可根据需要通过 uploadedAt 字段进一步精细化）
   const recentCount = images.length;
 
-  const collections: SidebarItem[] = [
-    { id: 'all', label: '全部照片', icon: Image, count: total },
-    { id: 'recent', label: '最近上传', icon: Clock, count: recentCount },
-    { id: 'favorites', label: '我的收藏', icon: Heart, count: favoritesCount },
-    { id: 'downloads', label: '我的下载', icon: Download, count: downloadCount },
-    { id: 'trash', label: '回收站', icon: Trash2, count: trashCount },
-  ];
+  const collections: SidebarItem[] = GALLERY_COLLECTIONS.map(item => ({
+    id: item.id,
+    label: item.label,
+    icon: iconMap[item.icon],
+    count: selectedId === item.id ? total : undefined
+  }));
 
   const renderSection = (title: string, items: SidebarItem[]) => (
     <div className="mb-6">
@@ -53,7 +76,7 @@ export const GalleryListPanel = ({
           return (
             <button
               key={item.id}
-              onClick={() => onSelect?.(item.id)}
+              onClick={() => handleSelect(item.id)}
               className={`w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 transition-colors rounded-lg mb-1 ${
                 isSelected ? 'bg-primary-500 text-white' : 'hover:bg-gray-200'
               }`}

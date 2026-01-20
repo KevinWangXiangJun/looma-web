@@ -88,12 +88,13 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectItemBase = forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & { showCheckmark?: boolean }
+>(({ className, children, showCheckmark = true, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer select-none items-center rounded py-1.5 pl-8 pr-2 text-sm outline-none transition-colors',
+      'relative flex w-full cursor-pointer select-none items-center rounded py-1.5 pr-2 text-sm outline-none transition-colors',
+      showCheckmark ? 'pl-8' : 'pl-2',
       'focus:bg-gray-200 hover:text-gray-900 hover:bg-gray-200',
       'data-[state=checked]:bg-primary data-[state=checked]:text-primary-900',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
@@ -101,11 +102,13 @@ const SelectItemBase = forwardRef<
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
+    {showCheckmark && (
+      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <SelectPrimitive.ItemIndicator>
+          <Check className="h-4 w-4" />
+        </SelectPrimitive.ItemIndicator>
+      </span>
+    )}
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));

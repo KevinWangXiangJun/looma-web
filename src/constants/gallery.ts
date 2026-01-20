@@ -17,8 +17,17 @@ export const GALLERY_GAP = 12;
 // 瀑布流图片最小宽度（用于计算响应式列数）
 export const GALLERY_IMAGE_MIN_WIDTH = 250;
 
+// 相册分类定义
+export const GALLERY_COLLECTIONS = [
+  { id: 'all', label: '全部照片', icon: 'Image' },
+  { id: 'recent', label: '最近上传', icon: 'Clock' },
+  { id: 'favorites', label: '我的收藏', icon: 'Heart' },
+  { id: 'downloads', label: '我的下载', icon: 'Download' },
+  { id: 'trash', label: '回收站', icon: 'Trash2' },
+] as const;
+
 // 无限滚动触发距离（距离底部多少像素时触发加载）
-export const INFINITE_SCROLL_ROOT_MARGIN = '200px';
+export const INFINITE_SCROLL_ROOT_MARGIN = '50px';
 
 // 无限滚动阈值（0.1 表示元素 10% 进入视口时触发）
 export const INFINITE_SCROLL_THRESHOLD = 0.1;

@@ -60,6 +60,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
   viewMode: 'grid',
   filters: {
     types: ['all'],
+    category: 'all',
   },
   page: 1,
   hasMore: true,
@@ -177,8 +178,24 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
 
     try {
       const pageToLoad = isRefresh ? 1 : state.page;
-      // 从本地服务获取 mock 数据
-      const response = await getGalleryImagesPaginated(pageToLoad, IMAGES_PER_PAGE || 20);
+      
+      // 准备过滤参数
+      // 如果 filters 中有 category，服务层会处理。
+      // 对于 'downloads' 分类，我们需要将下载列表 ID 传递给服务层，或者服务层能获取到。
+      // 由于目前是本地 Mock 服务，我们简单起见，将 filters 完整传给 Service
+      // 但 standard getGalleryImagesPaginated 只接受 page 和 limit。
+      // 我们需要扩展 getGalleryImagesPaginated 或传递额外参数。
+      // 为了保持简单，我们假设 filters 已经在 Store 中，Service 可以获取（不太好）或者传递。
+      // 我们的 getGalleryImagesPaginated 目前是：
+      // (page: number, limit: number)
+      
+      // 我们需要修改调用，传入 filters 和 downloads
+      const response = await getGalleryImagesPaginated(
+        pageToLoad, 
+        IMAGES_PER_PAGE || 20, 
+        state.filters, 
+        state.downloads // 传入下载列表ID，供 'downloads' 分类使用
+      );
       
       set((currentState) => {
         // 为新图片添加 page 标记
