@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
 import { GalleryToolbar } from './GalleryToolbar';
+import { GalleryBatchBar } from './GalleryBatchBar';
 import { GalleryGridView } from './GalleryGridView';
 import { GalleryListView } from './GalleryListView';
 import { useGalleryStore } from '@/store/galleryStore';
@@ -35,6 +36,10 @@ export function Gallery(): JSX.Element {
   
   // 追踪上一次计算的宽度，用于防止不必要的重复计算
   const prevCalculatedWidthRef = useRef<number | null>(null);
+
+  // 批量操作状态
+  const [isBatchMode, setIsBatchMode] = useState(false);
+  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
 
   // 计算布局函数（从 GalleryGridView 移到这里）
   // 不使用 useCallback，因为它内部没有任何依赖且每次重新创建反而会触发 useEffect
@@ -190,6 +195,44 @@ export function Gallery(): JSX.Element {
     };
   }, [viewMode]);
 
+  // 批量操作处理函数
+  const handleBatchModeChange = () => {
+    setIsBatchMode(!isBatchMode);
+    if (isBatchMode) {
+      setSelectedImageIds(new Set());
+    }
+  };
+
+  const handleExitBatchMode = () => {
+    setIsBatchMode(false);
+    setSelectedImageIds(new Set());
+  };
+
+  const handleSelectAll = () => {
+    if (selectedImageIds.size === images.length) {
+      // 已全选，取消全选
+      setSelectedImageIds(new Set());
+    } else {
+      // 选中所有显示的图片
+      setSelectedImageIds(new Set(images.map((img) => img.id)));
+    }
+  };
+
+  const handleCollect = () => {
+    console.log('Collect:', Array.from(selectedImageIds));
+    // TODO: 实现收藏逻辑
+  };
+
+  const handleDownload = () => {
+    console.log('Download:', Array.from(selectedImageIds));
+    // TODO: 实现下载逻辑
+  };
+
+  const handleDelete = () => {
+    console.log('Delete:', Array.from(selectedImageIds));
+    // TODO: 实现删除逻辑
+  };
+
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20 min-h-full flex flex-col">
       <div className="mb-6 flex-shrink-0">
@@ -198,7 +241,19 @@ export function Gallery(): JSX.Element {
       </div>
 
       <div className="flex-shrink-0 mb-4 sticky top-0 bg-gradient-to-br from-background via-background to-muted/20 z-10">
-        <GalleryToolbar />
+        <GalleryToolbar onBatchModeChange={handleBatchModeChange} />
+        {isBatchMode && (
+          <GalleryBatchBar
+            selectedCount={selectedImageIds.size}
+            totalCount={images.length}
+            isAllSelected={selectedImageIds.size === images.length}
+            onExit={handleExitBatchMode}
+            onSelectAll={handleSelectAll}
+            onCollect={handleCollect}
+            onDownload={handleDownload}
+            onDelete={handleDelete}
+          />
+        )}
       </div>
 
       {/* 内容区域 */}
