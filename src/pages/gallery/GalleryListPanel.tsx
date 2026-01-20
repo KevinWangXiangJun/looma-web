@@ -1,4 +1,5 @@
-import { Image, Clock, Heart, Trash2, FolderOpen, UploadCloud, LucideIcon } from 'lucide-react';
+import { Image, Clock, Heart, Trash2, Download, UploadCloud, LucideIcon } from 'lucide-react';
+import { useGalleryStore } from '@/store/galleryStore';
 
 interface SidebarItem {
   id: string;
@@ -18,17 +19,25 @@ export const GalleryListPanel = ({
   onSelect,
   selectedId = 'all',
 }: GallerySidebarProps) => {
-  const collections: SidebarItem[] = [
-    { id: 'all', label: '全部照片', icon: Image, count: 1240 },
-    { id: 'recent', label: '最近上传', icon: Clock, count: 85 },
-    { id: 'favorites', label: '我的收藏', icon: Heart, count: 42 },
-    { id: 'trash', label: '回收站', icon: Trash2, count: 12 },
-  ];
+  const images = useGalleryStore((state) => state.images);
+  const downloads = useGalleryStore((state) => state.downloads);
+  const total = useGalleryStore((state) => state.total);
 
-  const folders: SidebarItem[] = [
-    { id: 'folder-1', label: '产品摄影', icon: FolderOpen, count: 156 },
-    { id: 'folder-2', label: '营销素材', icon: FolderOpen, count: 89 },
-    { id: 'folder-3', label: '活动记录', icon: FolderOpen, count: 234 },
+  // 计算各类别的数量
+  const favoritesCount = images.filter(img => img.isFavorited).length;
+  const trashCount = images.filter(img => img.isDeleted).length;
+  const downloadCount = downloads.length;
+  
+  // 最近上传：统计所有加载的图片中最近上传的数量
+  // 这里简化为：已加载的全部图片数（可根据需要通过 uploadedAt 字段进一步精细化）
+  const recentCount = images.length;
+
+  const collections: SidebarItem[] = [
+    { id: 'all', label: '全部照片', icon: Image, count: total },
+    { id: 'recent', label: '最近上传', icon: Clock, count: recentCount },
+    { id: 'favorites', label: '我的收藏', icon: Heart, count: favoritesCount },
+    { id: 'downloads', label: '我的下载', icon: Download, count: downloadCount },
+    { id: 'trash', label: '回收站', icon: Trash2, count: trashCount },
   ];
 
   const renderSection = (title: string, items: SidebarItem[]) => (
@@ -81,7 +90,6 @@ export const GalleryListPanel = ({
 
       <nav className="flex-1 overflow-y-auto px-4">
         {renderSection('智能相册', collections)}
-        {renderSection('我的文件夹', folders)}
       </nav>
 
       <div className="px-4 pt-4 border-t border-gray-200">

@@ -80,13 +80,16 @@ export const GalleryGridView = forwardRef<
         threshold={50}
         passive="true"
       >
-        {renderedVisibleImages.map((item) => (
+        {renderedVisibleImages.map((image) => (
           <div 
-            key={item.id}
+            key={image.id}
             className="mb-4"
             style={{ width: `${safeItemWidth}px` }}
           >
-            <GalleryGridItem item={item} columns={safeColumns} />
+            <GalleryGridItem
+              image={image}
+              columns={safeColumns}
+            />
           </div>
         ))}
       </MasonryInfiniteGrid>

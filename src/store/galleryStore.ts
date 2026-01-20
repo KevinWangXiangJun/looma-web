@@ -13,14 +13,18 @@ interface GalleryState {
   isLoading: boolean;
   isInitialLoading: boolean;
   columnCount: number;
+  total: number; // 本地照片总数
 
   // 预览状态
   previewImage: GalleryImage | null;
   showPreview: boolean;
 
   // 批量模式状态
-  selectionMode: boolean; // renamed from isBatchMode
-  selectedIds: string[];
+  isBatchMode: boolean;
+  selectedImages: string[];
+
+  // 下载记录
+  downloads: string[];
 
   // 动作
   setViewMode: (mode: 'grid' | 'list') => void;
@@ -28,16 +32,22 @@ interface GalleryState {
   setColumnCount: (count: number) => void;
   setImages: (images: GalleryImage[] | ((prev: GalleryImage[]) => GalleryImage[])) => void;
   setPage: (page: number) => void;
-  setSelectedIds: (ids: string[] | ((prev: string[]) => string[])) => void;
   setPreviewImage: (image: GalleryImage | null) => void;
   setShowPreview: (show: boolean) => void;
   
   // 批量操作动作
-  toggleSelectionMode: () => void;
-  toggleSelection: (id: string) => void;
-  selectAll: () => void;
-  clearSelection: () => void;
-  exitSelectionMode: () => void;
+  toggleBatchMode: () => void;
+  toggleImageSelection: (id: string) => void;
+  selectAllImages: () => void;
+  clearImageSelection: () => void;
+  setSelectedImages: (ids: string[] | ((prev: string[]) => string[])) => void;
+
+  // 收藏、删除、下载操作
+  toggleFavorite: (id: string) => void;
+  toggleDelete: (id: string) => void;
+  addToDownloads: (ids: string[]) => void;
+  batchFavorite: (ids: string[], isFavorited: boolean) => void;
+  batchDelete: (ids: string[], isDeleted: boolean) => void;
 
   // 异步动作
   loadImages: (isRefresh?: boolean) => Promise<void>;
@@ -56,13 +66,15 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
   isLoading: false,
   isInitialLoading: true,
   columnCount: 4,
+  total: 0,
 
   previewImage: null,
   showPreview: false,
 
   // 批量模式初始状态
-  selectionMode: false,
-  selectedIds: [],
+  isBatchMode: false,
+  selectedImages: [],
+  downloads: [],
 
   // 动作实现
   setViewMode: (viewMode) => set({ viewMode }),
@@ -72,44 +84,76 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
     images: typeof images === 'function' ? images(state.images) : images,
   })),
   setPage: (page) => set({ page }),
-  setSelectedIds: (ids) => set((state) => ({
-    selectedIds: typeof ids === 'function' ? ids(state.selectedIds) : ids,
-  })),
   setPreviewImage: (previewImage) => set({ previewImage }),
   setShowPreview: (showPreview) => set({ showPreview }),
-  
-  // 批量操作实现
-  toggleSelectionMode: () => set((state) => ({ 
-    selectionMode: !state.selectionMode,
-    selectedIds: [] 
+  setSelectedImages: (ids) => set((state) => ({
+    selectedImages: typeof ids === 'function' ? ids(state.selectedImages) : ids,
   })),
   
-  toggleSelection: (id) => set((state) => {
-    const isSelected = state.selectedIds.includes(id);
+  // 批量操作实现
+  toggleBatchMode: () => set((state) => ({ 
+    isBatchMode: !state.isBatchMode,
+    selectedImages: [] 
+  })),
+  
+  toggleImageSelection: (id) => set((state) => {
+    const isSelected = state.selectedImages.includes(id);
     if (isSelected) {
-      return { selectedIds: state.selectedIds.filter(itemId => itemId !== id) };
+      return { selectedImages: state.selectedImages.filter(itemId => itemId !== id) };
     } else {
-      return { selectedIds: [...state.selectedIds, id] };
+      return { selectedImages: [...state.selectedImages, id] };
     }
   }),
   
-  selectAll: () => set((state) => ({ 
-    selectedIds: state.images.map(img => img.id) 
+  selectAllImages: () => set((state) => ({ 
+    selectedImages: state.images.map(img => img.id) 
   })),
   
-  clearSelection: () => set({ selectedIds: [] }),
-  
-  exitSelectionMode: () => set({ selectionMode: false, selectedIds: [] }),
+  clearImageSelection: () => set({ selectedImages: [] }),
 
+  // 切换单张图片收藏状态
+  toggleFavorite: (id) => set((state) => ({
+    images: state.images.map(img => 
+      img.id === id ? { ...img, isFavorited: !img.isFavorited } : img
+    ),
+  })),
+
+  // 切换单张图片删除状态
+  toggleDelete: (id) => set((state) => ({
+    images: state.images.map(img => 
+      img.id === id ? { ...img, isDeleted: !img.isDeleted } : img
+    ),
+  })),
+
+  // 添加到下载记录
+  addToDownloads: (ids) => set((state) => ({
+    downloads: Array.from(new Set([...state.downloads, ...ids])),
+  })),
+
+  // 批量设置收藏状态
+  batchFavorite: (ids, isFavorited) => set((state) => ({
+    images: state.images.map(img => 
+      ids.includes(img.id) ? { ...img, isFavorited } : img
+    ),
+  })),
+
+  // 批量设置删除状态
+  batchDelete: (ids, isDeleted) => set((state) => ({
+    images: state.images.map(img => 
+      ids.includes(img.id) ? { ...img, isDeleted } : img
+    ),
+  })),
+  
   resetGallery: () => set({ 
     images: [], 
     page: 1, 
     hasMore: true, 
     isInitialLoading: true,
-    selectionMode: false,
-    selectedIds: [],
+    isBatchMode: false,
+    selectedImages: [],
     previewImage: null,
-    showPreview: false
+    showPreview: false,
+    downloads: [],
   }),
 
 
@@ -126,7 +170,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
         page: 1, 
         hasMore: true, 
         images: [],
-        selectedIds: [],
+        selectedImages: [],
         isInitialLoading: true
       });
     }
@@ -151,6 +195,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
           images: newImages,
           hasMore: response.hasMore,
           page: pageToLoad + 1,
+          total: response.total,
           isLoading: false,
           isInitialLoading: false,
         };

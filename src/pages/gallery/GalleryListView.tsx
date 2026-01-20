@@ -12,21 +12,9 @@ export const GalleryListView: React.FC<GalleryListProps> = ({ renderedVisibleIma
   const {
     images,
     isLoading,
-    selectionMode,
-    selectedIds,
-    toggleSelection,
-    setPreviewImage,
-    setShowPreview,
   } = useGalleryStore();
 
-  const handleImageClick = (image: any) => {
-    if (selectionMode) {
-      toggleSelection(image.id);
-    } else {
-      setPreviewImage(image);
-      setShowPreview(true);
-    }
-  };
+  
 
   return (
     <div className="w-full space-y-3 pb-4">
@@ -34,9 +22,6 @@ export const GalleryListView: React.FC<GalleryListProps> = ({ renderedVisibleIma
         <GalleryListItem
           key={img.id}
           image={img}
-          onClick={handleImageClick}
-          onViewDetails={handleImageClick}
-          selected={selectedIds.includes(img.id)}
         />
       ))}
       

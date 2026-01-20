@@ -13,36 +13,102 @@ import { GALLERY_IMAGE_MIN_WIDTH, GALLERY_GAP } from '@/constants/gallery';
 export function Gallery(): JSX.Element {
   usePageTitle('navigation.gallery');
 
-  // 从 Store 获取状态和操作
+  // ============ Zustand Store 状态 ============
   const images = useGalleryStore((state) => state.images);
   const isInitialLoading = useGalleryStore((state) => state.isInitialLoading);
   const viewMode = useGalleryStore((state) => state.viewMode);
-  const loadImages = useGalleryStore((state) => state.loadImages);
-  const resetGallery = useGalleryStore((state) => state.resetGallery);
   const isLoading = useGalleryStore((state) => state.isLoading);
   const hasMore = useGalleryStore((state) => state.hasMore);
+  const isBatchMode = useGalleryStore((state) => state.isBatchMode);
+  const selectedImages = useGalleryStore((state) => state.selectedImages);
 
-  // ============ 本地状态和 refs ============
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  
+  // ============ Zustand Store 动作 ============
+  const loadImages = useGalleryStore((state) => state.loadImages);
+  const resetGallery = useGalleryStore((state) => state.resetGallery);
+  const toggleBatchMode = useGalleryStore((state) => state.toggleBatchMode);
+  const selectAllImages = useGalleryStore((state) => state.selectAllImages);
+  const clearImageSelection = useGalleryStore((state) => state.clearImageSelection);
+
+  // ============ 本地 State ============
   // 布局状态：从 Gallery 计算，传递给 GalleryGridView
   // 初始为 null，只有完全计算好后才有真实值
   const [gridColumns, setGridColumns] = useState<number | null>(null);
   const [gridItemWidth, setGridItemWidth] = useState<number | null>(null);
+
+  // ============ Refs ============
+  // DOM 引用
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // 状态 Refs (用于解决闭包陷阱)
+  const loadImagesRef = useRef(loadImages);
+  const isLoadingRef = useRef(isLoading);
+  const hasMoreRef = useRef(hasMore);
   
+  // 滚动加载相关 Refs
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  // 控制是否允许自动加载（用于防止初始加载时的误触）
+  const allowAutoLoadRef = useRef(false);
+
+  // 布局相关 Refs
   // 标记是否已完成初始化
   const hasInitializedRef = useRef(false);
-  
   // 追踪上一次计算的宽度，用于防止不必要的重复计算
   const prevCalculatedWidthRef = useRef<number | null>(null);
+  
+  // ============ Effects: 更新 Refs ============
+  // 每次依赖变化时更新 ref，确保 IntersectionObserver 中能获取最新值
+  useEffect(() => { loadImagesRef.current = loadImages; }, [loadImages]);
+  useEffect(() => { isLoadingRef.current = isLoading; }, [isLoading]);
+  useEffect(() => { hasMoreRef.current = hasMore; }, [hasMore]);
 
-  // 批量操作状态
-  const [isBatchMode, setIsBatchMode] = useState(false);
-  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
+  // 重置 allowAutoLoadRef 当进入初始加载时
+  useEffect(() => {
+    if (isInitialLoading) {
+      allowAutoLoadRef.current = false;
+    }
+  }, [isInitialLoading]);
 
+  // ============ Effects: 滚动加载 ============
+  // 统一的滚动加载逻辑
+  useEffect(() => {
+    // 如果正在初始加载，或者元素未挂载，则不设置 Observer
+    // 当 isInitialLoading 变为 false 时（即初始加载完成、DOM挂载后）执行
+    if (isInitialLoading || !loadMoreRef.current) {
+      return;
+    }
+
+    // 清理旧的 observer
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+    
+    // 延迟开启自动加载，防止初始渲染时瞬间触发
+    const enableAutoLoadTimer = setTimeout(() => {
+      allowAutoLoadRef.current = true;
+    }, 500);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoadingRef.current && hasMoreRef.current && allowAutoLoadRef.current) {
+           loadImagesRef.current();
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    observer.observe(loadMoreRef.current);
+    observerRef.current = observer;
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(enableAutoLoadTimer);
+    };
+  }, [isInitialLoading]);
+  
+  // ============ Effects: 布局计算 ============
   // 计算布局函数（从 GalleryGridView 移到这里）
-  // 不使用 useCallback，因为它内部没有任何依赖且每次重新创建反而会触发 useEffect
   const calculateLayout = (): { columns: number; itemWidth: number } | null => {
     const container = containerRef.current;
     if (!container) {
@@ -77,45 +143,18 @@ export function Gallery(): JSX.Element {
     return { columns: newColumns, itemWidth: columnWidth };
   };
 
-  // 优化渲染列表计算，避免频繁变化导致闪烁，窗口化渲染：仅保留最近 N 页的图片
+  // 优化渲染列表计算，避免频繁变化导致闪烁
   const renderedVisibleImages = useMemo(() => {
-    // 禁用窗口化渲染，直接返回所有图片
-    // 窗口化会导致列表频繁变动，结合虚拟滚动容易引起滚动条抖动
     return images;
   }, [images]);
 
+  // ============ Effects: 生命周期 ============
   // 初始化加载
   useEffect(() => {
     resetGallery(); 
     loadImages(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // 统一的滚动加载逻辑
-  useEffect(() => {
-    let timer: any = null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading && hasMore) {
-           // 增加一个小延时，防止因为布局（切换视图）瞬间高度塌陷导致的误触
-           timer = setTimeout(() => {
-             loadImages();
-           }, 100);
-        }
-      },
-      { threshold: 0.01, rootMargin: '50px' }
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    return () => {
-       observer.disconnect();
-       if (timer) clearTimeout(timer);
-    };
-  }, [isLoading, hasMore, loadImages, viewMode]);
 
   // 统一的布局初始化和管理
   useEffect(() => {
@@ -195,41 +234,39 @@ export function Gallery(): JSX.Element {
     };
   }, [viewMode]);
 
+  // ============ 事件处理 ============
   // 批量操作处理函数
   const handleBatchModeChange = () => {
-    setIsBatchMode(!isBatchMode);
-    if (isBatchMode) {
-      setSelectedImageIds(new Set());
-    }
+    toggleBatchMode();
   };
 
   const handleExitBatchMode = () => {
-    setIsBatchMode(false);
-    setSelectedImageIds(new Set());
+    clearImageSelection();
+    toggleBatchMode();
   };
 
   const handleSelectAll = () => {
-    if (selectedImageIds.size === images.length) {
+    if (selectedImages.length === images.length) {
       // 已全选，取消全选
-      setSelectedImageIds(new Set());
+      clearImageSelection();
     } else {
       // 选中所有显示的图片
-      setSelectedImageIds(new Set(images.map((img) => img.id)));
+      selectAllImages();
     }
   };
 
   const handleCollect = () => {
-    console.log('Collect:', Array.from(selectedImageIds));
+    console.log('Collect:', selectedImages);
     // TODO: 实现收藏逻辑
   };
 
   const handleDownload = () => {
-    console.log('Download:', Array.from(selectedImageIds));
+    console.log('Download:', selectedImages);
     // TODO: 实现下载逻辑
   };
 
   const handleDelete = () => {
-    console.log('Delete:', Array.from(selectedImageIds));
+    console.log('Delete:', selectedImages);
     // TODO: 实现删除逻辑
   };
 
@@ -244,9 +281,9 @@ export function Gallery(): JSX.Element {
         <GalleryToolbar onBatchModeChange={handleBatchModeChange} />
         {isBatchMode && (
           <GalleryBatchBar
-            selectedCount={selectedImageIds.size}
+            selectedCount={selectedImages.length}
             totalCount={images.length}
-            isAllSelected={selectedImageIds.size === images.length}
+            isAllSelected={selectedImages.length === images.length}
             onExit={handleExitBatchMode}
             onSelectAll={handleSelectAll}
             onCollect={handleCollect}

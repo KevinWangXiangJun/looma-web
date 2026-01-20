@@ -14,6 +14,8 @@ export interface GalleryImage {
   uploadedAt: string;                 // 上传时间（ISO 8601）
   tags: string[];                     // 标签
   resolution?: string;                // 分辨率字符串（如 "1920x1080"）
+  isFavorited?: boolean;              // 是否收藏
+  isDeleted?: boolean;                // 是否删除（在回收站中）
 }
 
 // 图库过滤条件

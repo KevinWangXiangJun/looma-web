@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { RefreshCw, Check, MoreVertical, Eye, Download, Trash2, AlertCircle } from 'lucide-react';
+import { Check, MoreVertical, Eye, Download, Trash2 } from 'lucide-react';
 import { useState, memo } from 'react';
 import {
   DropdownMenu,
@@ -16,38 +16,30 @@ import { useDeleteManager } from '@/hooks/useDeleteManager';
 
 export interface GalleryListItemProps {
   image: GalleryImage;
-  onClick?: (img: GalleryImage) => void;
-  onViewDetails?: (img: GalleryImage) => void;
-  selected?: boolean;
-  onImageLoad?: () => void;
 }
 
 export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
   image,
-  onClick,
-  onViewDetails,
-  selected = false,
-  onImageLoad,
 }) => {
-  const [imageError, setImageError] = useState(false);
-  const [retrying, setRetrying] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const selectionMode = useGalleryStore((state) => state.selectionMode);
+  const isBatchMode = useGalleryStore((state) => state.isBatchMode);
+  const selectedImages = useGalleryStore((state) => state.selectedImages);
+  const toggleImageSelection = useGalleryStore((state) => state.toggleImageSelection);
+  const setPreviewImage = useGalleryStore((state) => state.setPreviewImage);
+  const setShowPreview = useGalleryStore((state) => state.setShowPreview);
   const { handleDownload } = useDownloadManager();
   const { handleDelete } = useDeleteManager();
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  const selected = selectedImages.includes(image.id);
 
-  const handleRetry = async () => {
-    setRetrying(true);
-    setImageError(false);
-    // 使用 setTimeout 确保在重新加载之前重置错误状态
-    setTimeout(() => {
-      setRetrying(false);
-    }, 100);
+  const handleImageClick = (image: any) => {
+    if (isBatchMode) {
+      toggleImageSelection(image.id);
+    } else {
+      setPreviewImage(image);
+      setShowPreview(true);
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -69,50 +61,25 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
   return (
     <div>
       <Card
-        className={`p-4 relative overflow-hidden cursor-pointer transition-all hover:shadow-md ${selected ? 'ring-2 border-1 border-primary ring-primary' : ''}`}
-        onClick={() => onClick && image && onClick(image)}
+        className={`p-4 relative overflow-hidden cursor-pointer transition-all hover:shadow-md ${selected ? 'border border-primary-500 bg-primary-50' : ''}`}
+        onClick={() => handleImageClick(image)}
       >
         {selected && (
           <div className="absolute inset-0 bg-primary/20 flex items-center justify-center pointer-events-none">
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <Check className="w-5 h-5 text-primary-foreground" />
+              <Check className="w-6 h-6 text-white" />
             </div>
           </div>
         )}
         
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-muted">
-            {imageError ? (
-              <div className="w-full h-full flex items-center justify-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRetry();
-                  }}
-                  disabled={retrying}
-                  className="w-8 h-8"
-                >
-                  {retrying ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <img
-                src={image.thumbnail || image.url}
-                alt={image.name}
-                loading="lazy"
-                className="w-full h-full object-cover"
-                onLoad={() => {
-                  onImageLoad && onImageLoad();
-                }}
-                onError={handleImageError}
-              />
-            )}
+            <img
+              src={image.thumbnail || image.url}
+              alt={image.name}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -128,7 +95,7 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
                     size="sm" 
                     className="h-8 w-8 p-0" 
                     onClick={(e) => e.stopPropagation()}
-                    disabled={selectionMode && selected}
+                    disabled={isBatchMode && selected}
                   >
                     <MoreVertical className="w-4 h-4" />
                   </Button>
@@ -137,7 +104,7 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
                   <DropdownMenuItem
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (onViewDetails) onViewDetails(image);
+                      handleImageClick(image);
                     }}
                   >
                     <Eye className="w-4 h-4 mr-2" />查看详情

@@ -26,7 +26,7 @@ export const MenuToggleButton = ({ isSidebarCollapsed, onToggle }: MenuToggleBut
           )}
         </button>
       </HoverCardTrigger>
-      <HoverCardContent side="bottom" align="center" sideOffset={0} className="w-auto p-2 bg-gray-700 border-gray-700 text-white [&_svg]:fill-gray-700">
+      <HoverCardContent side="bottom" align="center" sideOffset={0} className="w-auto p-2 bg-gray-300 border-gray-300 text-gray-900 [&_svg]:fill-gray-300">
         <div className="text-xs font-medium">
           {!isSidebarCollapsed ? '关闭菜单' : '打开菜单'}
         </div>
