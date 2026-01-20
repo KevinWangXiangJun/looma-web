@@ -53,6 +53,30 @@ export const THEME_CONFIG = {
 };
 
 /**
+ * 主题选项配置
+ */
+export const THEME_OPTIONS = [
+  {
+    id: 'light',
+    labelKey: 'userProfile.theme.light',
+    labelFallback: 'Light',
+    icon: 'sun',
+  },
+  {
+    id: 'dark',
+    labelKey: 'userProfile.theme.dark',
+    labelFallback: 'Dark',
+    icon: 'moon',
+  },
+  {
+    id: 'auto',
+    labelKey: 'userProfile.theme.auto',
+    labelFallback: 'Follow System',
+    icon: 'monitor',
+  },
+] as const;
+
+/**
  * 语言常量
  */
 export const LANGUAGE_CONFIG = {

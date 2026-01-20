@@ -7,5 +7,6 @@ export { useAuth } from './useAuth';
 export { useAppConfig } from './useAppConfig';
 export { usePageTitle } from './usePageTitle';
 export { useLoginCredential } from './useLoginCredential';
+export { useInfiniteScroll } from './useInfiniteScroll';
 
 

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useToolsStore } from '@/store';
 import { TOOLS, getColorVariant } from '@/constants/tools';
 import { Card } from '@/components/ui/Card';
-import { Zap, Users, Award } from 'lucide-react';
+import { Zap, Users, Award, Lightbulb } from 'lucide-react';
 import type { Tool } from '@/types/tools';
 
 export const ToolsHomepage: React.FC = () => {
@@ -35,7 +35,7 @@ export const ToolsHomepage: React.FC = () => {
           <div className="grid grid-cols-3 gap-4 mt-8">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <Zap className="w-6 h-6" />
+                <Zap className="w-8 h-8" />
                 <div>
                   <p className="text-sm text-primary-100">高效工具</p>
                   <p className="text-2xl font-bold">{TOOLS.length}</p>
@@ -44,7 +44,7 @@ export const ToolsHomepage: React.FC = () => {
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <Users className="w-6 h-6" />
+                <Users className="w-8 h-8" />
                 <div>
                   <p className="text-sm text-primary-100">用户信任</p>
                   <p className="text-2xl font-bold">10K+</p>
@@ -53,7 +53,7 @@ export const ToolsHomepage: React.FC = () => {
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <Award className="w-6 h-6" />
+                <Award className="w-8 h-8" />
                 <div>
                   <p className="text-sm text-primary-100">功能完善</p>
                   <p className="text-2xl font-bold">100%</p>
@@ -192,8 +192,9 @@ export const ToolsHomepage: React.FC = () => {
       {/* 快速开始指南 */}
       <section className="px-6 pt-12 pb-2 w-full">
         <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-2xl p-8 border border-primary-200">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            💡 {t('tools.quickStart', '快速开始')}
+          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Lightbulb className="w-6 h-6 text-primary-600" />
+            {t('tools.quickStart', '快速开始')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex gap-4">

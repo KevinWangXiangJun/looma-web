@@ -19,7 +19,7 @@ export const SidebarPanel = ({ isSidebarCollapsed, activeItem, ContentComponent 
   if (isSidebarCollapsed) return null;
 
   return (
-    <div className="w-[16.5rem] h-full flex flex-col transition-all duration-300 ease-in-out overflow-hidden border-r border-gray-300">
+    <div className="w-[16.5rem] h-full flex flex-col overflow-hidden border-r border-gray-300">
       {/* 面板头部 */}
       <div className="h-16 flex items-center px-4 gap-3 flex-shrink-0 border-b border-gray-200">
         <img src="/logo.svg" alt="Looma" className="h-10 w-10 flex-shrink-0" />

@@ -13,7 +13,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }): JSX.Ele
 
       {/* 右侧：内容区域 */}
       <main className="flex-1 h-full overflow-hidden relative flex flex-col">
-        <div className="flex-1 overflow-auto scroll-smooth">
+        <div className="flex-1 overflow-auto scroll-smooth" style={{ scrollbarGutter: 'stable' }}>
           <div className="w-full bg-white p-4">
             {children}
           </div>

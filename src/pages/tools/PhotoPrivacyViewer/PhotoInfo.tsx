@@ -6,7 +6,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import { formatFileSize, getFormatName } from '@/utils/tools';
+import { formatFileSize } from '@/utils/format';
+import { getFormatName } from '@/utils/tools';
 
 interface PhotoInfoProps {
   fileName?: string;

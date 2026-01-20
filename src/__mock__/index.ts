@@ -123,3 +123,63 @@ export const mockCredentials = [
     password: 'password123',
   },
 ];
+
+/**
+ * Mock 图库图片数据 - 使用本地项目图片
+ */
+import type { GalleryImage, ImageFormat } from '@/types/gallery';
+
+// 本地图片配置 - 使用相对于 public 的路径
+const LOCAL_IMAGES = [
+  { path: 'src/assets/images/carousel-1.jfif', width: 1920, height: 1080 },
+  { path: 'src/assets/images/carousel-2.jfif', width: 1920, height: 1440 },
+  { path: 'src/assets/images/carousel-3.jfif', width: 1920, height: 1280 },
+  { path: 'src/assets/images/carousel-4.jpg', width: 2000, height: 1200 },
+  { path: 'src/assets/images/carousel-5.jpg', width: 2000, height: 1500 },
+  { path: 'src/assets/images/carousel-6.jpg', width: 2000, height: 900 },
+];
+
+const generateMockGalleryImages = (count: number): GalleryImage[] => {
+  const formats: ImageFormat[] = ['jpg', 'png', 'gif'];
+  const tags = [
+    ['nature', 'landscape'],
+    ['architecture', 'building'],
+    ['portrait', 'people'],
+    ['food', 'photography'],
+    ['abstract', 'art'],
+    ['travel', 'adventure'],
+    ['technology', 'digital'],
+    ['sports', 'action'],
+  ];
+
+  const images: GalleryImage[] = [];
+  // 使用当前时间戳作为基础，确保每次都不同
+  const timestamp = Date.now();
+
+  for (let i = 1; i <= count; i++) {
+    const localImg = LOCAL_IMAGES[i % LOCAL_IMAGES.length];
+    const formatIdx = i % formats.length;
+    const tagIdx = i % tags.length;
+    const format = formats[formatIdx];
+    // 使用时间戳 + 索引生成绝对唯一的ID
+    const uniqueId = `img-${timestamp}-${i}`;
+
+    images.push({
+      id: uniqueId,
+      name: `本地照片 ${i}`,
+      url: localImg.path,
+      thumbnail: localImg.path,
+      width: localImg.width,
+      height: localImg.height,
+      format,
+      size: Math.floor(500000 + Math.random() * 2000000),
+      uploadedAt: new Date(Date.now() - i * 86400000).toISOString(),
+      tags: tags[tagIdx],
+      resolution: `${localImg.width}×${localImg.height}`,
+    });
+  }
+
+  return images;
+};
+
+export const mockGalleryImages = generateMockGalleryImages(100);

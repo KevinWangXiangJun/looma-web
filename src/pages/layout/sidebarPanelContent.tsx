@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { ToolsListPanel } from '@/pages/tools/ToolsListPanel';
+import { GalleryListPanel } from '@/pages/gallery';
 import type { NavItem } from '@/types';
 
 /**
@@ -19,6 +20,7 @@ export interface SidebarPanelContentProps {
  */
 const contentComponentMap: Record<string, React.ComponentType<any>> = {
   tools: ToolsListPanel,
+  gallery: GalleryListPanel,
 };
 
 /**

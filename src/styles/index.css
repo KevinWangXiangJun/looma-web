@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* 
+      防止页面内容高度变化导致滚动条出现/消失引起的页面抖动
+      scrollbar-gutter: stable; 会始终预留滚动条的空间
+    */
+    scrollbar-gutter: stable;
+  }
+
   :root {
     /* ========================================================================
        1. COLOR PALETTE (Channel Values for Tailwind Opacity Support)

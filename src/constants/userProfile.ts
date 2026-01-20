@@ -6,7 +6,6 @@ import { Palette, HelpCircle, Zap, CreditCard, Download, Settings } from 'lucide
 import type { UserProfileMenuItem } from '@/types';
 
 export const createUserProfileMenuItems = (
-  t: (key: string, fallback: string) => string,
   actions: {
     onSettings: () => void;
     onTheme: () => void;
@@ -17,6 +16,7 @@ export const createUserProfileMenuItems = (
   }
 ): UserProfileMenuItem[] => [
   {
+    id: 'settings',
     icon: Settings,
     labelKey: 'userProfile.settings',
     labelFallback: 'Settings',
@@ -24,20 +24,23 @@ export const createUserProfileMenuItems = (
     showChevron: false,
   },
   {
+    id: 'theme',
     icon: Palette,
     labelKey: 'userProfile.theme',
     labelFallback: 'Theme',
     action: actions.onTheme,
-    showChevron: true,
+    showChevron: false,
   },
   {
+    id: 'help',
     icon: HelpCircle,
     labelKey: 'userProfile.help',
     labelFallback: 'Help & Resources',
     action: actions.onHelp,
-    showChevron: true,
+    showChevron: false,
   },
   {
+    id: 'advancedTools',
     icon: Zap,
     labelKey: 'userProfile.advancedTools',
     labelFallback: 'Advanced Tools (Trial)',
@@ -45,6 +48,7 @@ export const createUserProfileMenuItems = (
     showChevron: true,
   },
   {
+    id: 'pricing',
     icon: CreditCard,
     labelKey: 'userProfile.pricing',
     labelFallback: 'Subscription Plans & Pricing',
@@ -52,6 +56,7 @@ export const createUserProfileMenuItems = (
     showChevron: false,
   },
   {
+    id: 'buyHistory',
     icon: Download,
     labelKey: 'userProfile.buyHistory',
     labelFallback: 'Purchase History',
