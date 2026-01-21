@@ -1,22 +1,30 @@
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/HoverCard';
 import { MenuToggleIcon, MenuToggleWithArrowIcon } from '@/components/ui/MenuToggleIcon';
-
-interface MenuToggleButtonProps {
-  isSidebarCollapsed: boolean;
-  onToggle: () => void;
-}
+import { useNavigationStore } from '@/store';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * 菜单切换按钮组件
  * 包含 HoverCard 提示
  * 展开时显示"关闭菜单"，折叠时显示"打开菜单"
  */
-export const MenuToggleButton = ({ isSidebarCollapsed, onToggle }: MenuToggleButtonProps): JSX.Element => {
+export const MenuToggleButton = (): JSX.Element => {
+  const { isSidebarCollapsed, setIsSidebarCollapsed } = useNavigationStore(
+    useShallow((state) => ({
+      isSidebarCollapsed: state.isSidebarCollapsed,
+      setIsSidebarCollapsed: state.setIsSidebarCollapsed,
+    }))
+  );
+
+  const handleToggle = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
     <HoverCard delayDuration={200}>
       <HoverCardTrigger asChild>
         <button
-          onClick={onToggle}
+          onClick={handleToggle}
           className="w-10 h-10 mb-4 flex items-center justify-center rounded-lg text-primary-600 hover:bg-primary-600/20 transition-colors overflow-visible cursor-pointer"
         >
           {!isSidebarCollapsed ? (

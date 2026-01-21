@@ -1,40 +1,46 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { GalleryImage } from '@/types/gallery';
 import { useGalleryStore } from '@/store/galleryStore';
 
 interface GalleryGridItemProps {
   image: GalleryImage;
-  columns?: number;
 }
 
 export const GalleryGridItem: React.FC<GalleryGridItemProps> = memo(({
   image,
-  columns = 3,
 }) => {
-  const isBatchMode = useGalleryStore((state) => state.isBatchMode);
-  const toggleImageSelection = useGalleryStore((state) => state.toggleImageSelection);
-  const setPreviewImage = useGalleryStore((state) => state.setPreviewImage);
-  const setShowPreview = useGalleryStore((state) => state.setShowPreview);
-  
   // 性能优化：只订阅当前图片是否被选中，而不是订阅整个 selectedImages 数组
   // 这样当操作其他图片时，当前组件不会重渲染
   const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
 
-  const handleImageClick = (image: any) => {
+  const handleImageClick = useCallback((image: any) => {
+    // 性能优化：直接从 "getState()" 获取状态和方法
+    const store = useGalleryStore.getState();
+    const isBatchMode = store.isBatchMode;
+    
     if (isBatchMode) {
-      toggleImageSelection(image.id);
+      store.toggleImageSelection(image.id);
     } else {
-      setPreviewImage(image);
-      setShowPreview(true);
+      store.setPreviewImage(image);
+      store.setShowPreview(true);
     }
-  };
+  }, []);
 
   return (
     <div 
-      className={`relative rounded-lg overflow-hidden bg-gray-100 cursor-pointer shadow-sm hover:shadow-md transition-shadow group ${selected ? 'border border-primary-500 bg-primary-50' : ''}`}
-      style={{ aspectRatio: `${image.width}/${image.height}` }}
+      className="relative rounded-lg overflow-hidden bg-gray-100 cursor-pointer shadow-sm hover:shadow-md transition-shadow group"
+      style={{ 
+        aspectRatio: `${image.width}/${image.height}`,
+        // 性能优化：提示浏览器这些属性即将变化，准备 GPU 加速
+        willChange: 'transform, box-shadow'
+      }}
       onClick={() => handleImageClick(image)}
     >
+      {/* 选中状态遮罩 - 使用绝对定位覆盖层，避免修改父容器 class 触发 Grid 重排 */}
+      {selected && (
+        <div className="absolute inset-0 z-8 border-2 border-primary-500 bg-primary-50/20 pointer-events-none rounded-lg" />
+      )}
+      
       <img 
         src={image.thumbnail || image.url} 
         alt={image.name}

@@ -1,3 +1,4 @@
+import { useMemo, memo } from 'react';
 import { Image, Clock, Heart, Trash2, Download, UploadCloud, LucideIcon } from 'lucide-react';
 import { useGalleryStore } from '@/store/galleryStore';
 import { GALLERY_COLLECTIONS } from '@/constants/gallery';
@@ -15,17 +16,11 @@ interface SidebarItem {
 
 interface GallerySidebarProps {
   className?: string;
-  onSelect?: (id: string) => void;
-  selectedId?: string;
 }
 
-export const GalleryListPanel = ({
+export const GalleryListPanel = memo(({
   className = '',
-  // onSelect, 
-  // selectedId = 'all', 
 }: GallerySidebarProps & { [key: string]: any }) => {
-  const images = useGalleryStore((state) => state.images);
-  const downloads = useGalleryStore((state) => state.downloads);
   const total = useGalleryStore((state) => state.total);
   
   // 新增：从 Store 获取过滤状态和操作
@@ -46,22 +41,12 @@ export const GalleryListPanel = ({
     loadImages(true);
   };
 
-  // 计算各类别的数量
-  // 注意：在真实应用中，这些统计数据应该由独立的 API 通过 dashboardStore 或 galleryStore 的 meta 信息返回
-  // 目前因为是本地分页加载，images 数组只包含当前页或已加载的数据，不能准确代表总数
-  // 但为了不破坏现有逻辑，我们暂时根据 store.total 来显示当前选中类别的总数
-  // 其他类别的数量在未选中时可能不准确 (TODO: 完善统计接口)
-  const favoritesCount = images.filter(img => img.isFavorited).length;
-  const trashCount = images.filter(img => img.isDeleted).length;
-  const downloadCount = downloads.length;
-  const recentCount = images.length;
-
-  const collections: SidebarItem[] = GALLERY_COLLECTIONS.map(item => ({
+  const collections: SidebarItem[] = useMemo(() => GALLERY_COLLECTIONS.map(item => ({
     id: item.id,
     label: item.label,
     icon: iconMap[item.icon],
     count: selectedId === item.id ? total : undefined
-  }));
+  })), [selectedId, total]);
 
   const renderSection = (title: string, items: SidebarItem[]) => (
     <div className="mb-6">
@@ -102,7 +87,7 @@ export const GalleryListPanel = ({
 
   return (
     <div
-      className={`w-full flex flex-col h-full bg-white py-4 overflow-y-auto ${className}`}
+      className={`w-full flex flex-col h-full py-4 overflow-y-auto ${className}`}
     >
       <div className="px-4 mb-6">
         <button className="w-full flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
@@ -127,6 +112,6 @@ export const GalleryListPanel = ({
       </div>
     </div>
   );
-};
+});
 
 export default GalleryListPanel;

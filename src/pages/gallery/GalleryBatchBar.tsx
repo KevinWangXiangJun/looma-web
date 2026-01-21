@@ -1,28 +1,57 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { X, Square, CheckSquare, Heart, Download, Trash2 } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '@/components/ui';
+import { useGalleryStore } from '@/store/galleryStore';
 
-interface GalleryBatchBarProps {
-  selectedCount: number;
-  totalCount: number;
-  isAllSelected: boolean;
-  onExit: () => void;
-  onSelectAll: () => void;
-  onCollect: () => void;
-  onDownload: () => void;
-  onDelete: () => void;
-}
+// 使用 React.memo 避免不必要的重渲染
+export const GalleryBatchBar = memo(() => {
+  // 性能优化：分离不同用途的订阅以实现更精细的控制
+  // 1. 选择状态（频繁变化）- 独立订阅
+  const selectedImages = useGalleryStore(state => state.selectedImages);
+  
+  // 2. 总数统计（低频变化）- 独立订阅，避免订阅整个 images 数组
+  const totalCount = useGalleryStore(state => state.images.length);
+  
+  // 3. 操作方法（稳定）- 通过 useShallow 合并
+  const { toggleBatchMode, clearImageSelection, selectAllImages } = useGalleryStore(
+    useShallow((state) => ({
+      toggleBatchMode: state.toggleBatchMode,
+      clearImageSelection: state.clearImageSelection,
+      selectAllImages: state.selectAllImages
+    }))
+  );
 
-export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
-  selectedCount,
-  totalCount,
-  isAllSelected,
-  onExit,
-  onSelectAll,
-  onCollect,
-  onDownload,
-  onDelete,
-}) => {
+  const selectedCount = selectedImages.length;
+  const isAllSelected = selectedCount > 0 && selectedCount === totalCount;
+
+  // 动作处理函数
+  const handleExit = () => {
+    clearImageSelection();
+    toggleBatchMode();
+  };
+
+  const handleSelectAll = () => {
+    // 性能优化：简化逻辑，直接调用 selectAllImages
+    // Store 中已实现了全选/取消全选的切换逻辑
+    selectAllImages();
+  };
+
+  const handleCollect = () => {
+    console.log('Collect:', selectedImages);
+    // TODO: 实现收藏逻辑
+  };
+
+  const handleDownload = () => {
+    console.log('Download:', selectedImages);
+    // TODO: 实现下载逻辑
+  };
+
+  const handleDelete = () => {
+    console.log('Delete:', selectedImages);
+    // TODO: 实现删除逻辑
+  };
+
   return (
     <div className="h-16 border-b border-gray-200 bg-white flex items-center justify-between flex-shrink-0 z-10 px-4">
       {/* 左侧：已选择信息 */}
@@ -37,7 +66,7 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={onSelectAll}
+          onClick={handleSelectAll}
           title={isAllSelected ? '取消全选' : '全选'}
           className="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-200 hover:text-gray-900 flex items-center gap-2"
         >
@@ -48,7 +77,7 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={onCollect}
+          onClick={handleCollect}
           title="收藏"
           className="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-200 hover:text-gray-900 flex items-center gap-2"
         >
@@ -59,7 +88,7 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={onDownload}
+          onClick={handleDownload}
           title="下载"
           className="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-200 hover:text-gray-900 flex items-center gap-2"
         >
@@ -70,7 +99,7 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={onDelete}
+          onClick={handleDelete}
           title="删除"
           className="px-3 py-2 rounded-md border border-red-300 text-red-600 hover:bg-red-200 hover:text-red-700 flex items-center gap-2"
         >
@@ -83,7 +112,7 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={onExit}
+          onClick={handleExit}
           title="退出"
           className="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-200 hover:text-gray-900 flex items-center gap-2"
         >
@@ -93,6 +122,6 @@ export const GalleryBatchBar: React.FC<GalleryBatchBarProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default GalleryBatchBar;

@@ -1,7 +1,7 @@
+import { useState, memo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Check, MoreVertical, Eye, Download, Trash2 } from 'lucide-react';
-import { useState, memo } from 'react';
+import { MoreVertical, Eye, Download, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -23,21 +23,24 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
 }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const isBatchMode = useGalleryStore((state) => state.isBatchMode);
+  
   // 只订阅当前图片的选中状态
+  // 优化：仅订阅选中状态，操作方法直接通过 getState 调用，避免不必要的订阅和对象创建
   const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
-  const toggleImageSelection = useGalleryStore((state) => state.toggleImageSelection);
-  const setPreviewImage = useGalleryStore((state) => state.setPreviewImage);
-  const setShowPreview = useGalleryStore((state) => state.setShowPreview);
+  
   const { handleDownload } = useDownloadManager();
   const { handleDelete } = useDeleteManager();
 
   const handleImageClick = (image: any) => {
-    if (isBatchMode) {
-      toggleImageSelection(image.id);
+    // 性能优化：直接从 store "getState()" 获取状态和方法，避免订阅导致全量重渲染
+    // 这样每个列表项减少了对 store actions 的订阅，在大量数据时显著提升性能
+    const store = useGalleryStore.getState();
+
+    if (store.isBatchMode) {
+      store.toggleImageSelection(image.id);
     } else {
-      setPreviewImage(image);
-      setShowPreview(true);
+      store.setPreviewImage(image);
+      store.setShowPreview(true);
     }
   };
 
@@ -53,23 +56,20 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
     }
   };
 
-  const handleDownloadImage = () => {
+  const handleDownloadImage = useCallback(() => {
     handleDownload({ url: image.url, fileName: image.name || 'image.png' });
-  };
+  }, [image.url, image.name, handleDownload]);
 
   return (
     <div>
       <Card
-        className={`p-4 relative overflow-hidden cursor-pointer transition-all hover:shadow-md ${selected ? 'border border-primary-500 bg-primary-50' : ''}`}
+        className="p-4 relative overflow-hidden cursor-pointer transition-all hover:shadow-md"
         onClick={() => handleImageClick(image)}
       >
-        {/* {selected && (
-          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center pointer-events-none">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <Check className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        )} */}
+        {/* 选中状态遮罩 - 使用绝对定位覆盖层，避免修改父容器 class 触发重排 */}
+        {selected && (
+          <div className="absolute inset-0 z-8 border-2 border-primary-500 bg-primary-50/20 pointer-events-none rounded-lg" />
+        )}
         
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-muted">
@@ -86,7 +86,7 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
               <div className="flex-1 min-w-0">
                 <h4 className="font-medium truncate mb-1 text-sm">{image.chineseName || image.name}</h4>
                 {image.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-2">{image.description}</p>
+                  <p className="text-xs text-gray-500 line-clamp-2">{image.description}</p>
                 )}
               </div>
 
@@ -97,7 +97,6 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
                     size="sm" 
                     className="h-8 w-8 p-0" 
                     onClick={(e) => e.stopPropagation()}
-                    disabled={isBatchMode && selected}
                   >
                     <MoreVertical className="w-4 h-4" />
                   </Button>

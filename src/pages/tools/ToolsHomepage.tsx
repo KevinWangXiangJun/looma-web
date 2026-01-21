@@ -2,17 +2,18 @@
  * 工具主页面组件
  * 当未选择任何工具时显示，展示所有工具的介绍卡片
  */
-import React from 'react';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToolsStore } from '@/store';
 import { TOOLS, getColorVariant } from '@/constants/tools';
 import { Card } from '@/components/ui/Card';
-import { Zap, Users, Award, Lightbulb } from 'lucide-react';
+import { Lightbulb, Zap, Users, Award } from 'lucide-react';
 import type { Tool } from '@/types/tools';
 
-export const ToolsHomepage: React.FC = () => {
+export const ToolsHomepage: React.FC = memo(() => {
   const { t } = useTranslation();
-  const { setSelectedToolId } = useToolsStore();
+  // 性能优化：直接获取 action，无需订阅状态
+  const setSelectedToolId = useToolsStore(state => state.setSelectedToolId);
 
   const handleSelectTool = (tool: Tool) => {
     // 从主页点击工具卡片时，直接选中该工具
@@ -235,6 +236,6 @@ export const ToolsHomepage: React.FC = () => {
       </section>
     </div>
   );
-};
+});
 
 export default ToolsHomepage;

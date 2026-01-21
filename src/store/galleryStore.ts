@@ -106,9 +106,17 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
     }
   }),
   
-  selectAllImages: () => set((state) => ({ 
-    selectedImages: state.images.map(img => img.id) 
-  })),
+  selectAllImages: () => set((state) => {
+    // 性能优化：使用 Set 进行 O(1) 查询，而不是数组 includes() 的 O(n)
+    // 但在这里我们直接创建数组，使用 length 对比作为快速判断
+    if (state.selectedImages.length === state.images.length) {
+      // 已全选，则取消全选
+      return { selectedImages: [] };
+    }
+    // 未全选，则全选
+    // 性能优化：避免创建临时对象，直接使用 from 方法
+    return { selectedImages: state.images.map(img => img.id) };
+  }),
   
   clearImageSelection: () => set({ selectedImages: [] }),
 

@@ -1,7 +1,9 @@
-import React, { startTransition } from 'react';
+import React, { startTransition, useState, useMemo, useEffect } from 'react';
 import { LayoutGrid, List as ListIcon, Search, RefreshCw, CheckSquare, Image, Clock, Heart, Trash2, Download, LucideIcon } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { useGalleryStore } from '@/store/galleryStore';
 import { Button, FormInput } from '@/components/ui';
+import { debounce } from '@/utils/common';
 import {
   Select,
   SelectContent,
@@ -14,17 +16,28 @@ const iconMap: Record<string, LucideIcon> = {
   Image, Clock, Heart, Trash2, Download
 };
 
-interface GalleryToolbarProps {
-  onBatchModeChange?: () => void;
-}
+interface GalleryToolbarProps {}
 
-export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChange }) => {
-  const viewMode = useGalleryStore((state) => state.viewMode);
-  const setViewMode = useGalleryStore((state) => state.setViewMode);
-  const loadImages = useGalleryStore((state) => state.loadImages);
-  const isLoading = useGalleryStore((state) => state.isLoading);
-  const filters = useGalleryStore((state) => state.filters);
-  const setFilters = useGalleryStore((state) => state.setFilters);
+export const GalleryToolbar: React.FC<GalleryToolbarProps> = React.memo(() => {
+  const { 
+    viewMode, 
+    setViewMode, 
+    loadImages, 
+    isLoading, 
+    filters, 
+    setFilters,
+    toggleBatchMode
+  } = useGalleryStore(
+    useShallow((state) => ({
+      viewMode: state.viewMode,
+      setViewMode: state.setViewMode,
+      loadImages: state.loadImages,
+      isLoading: state.isLoading,
+      filters: state.filters,
+      setFilters: state.setFilters,
+      toggleBatchMode: state.toggleBatchMode,
+    }))
+  );
 
   const handleRefresh = () => {
     loadImages(true);
@@ -45,13 +58,39 @@ export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChang
   };
 
   const handleBatchMode = () => {
-    onBatchModeChange?.();
+    toggleBatchMode();
   };
+
+  // 本地状态用于输入框的即时响应
+  const [localSearch, setLocalSearch] = useState(filters.search || '');
+
+  // 当外部 filters.search 变化时（例如被清空），同步更新本地状态
+  useEffect(() => {
+    if (filters.search !== localSearch) {
+      setLocalSearch(filters.search || '');
+    }
+  }, [filters.search]);
+
+  // 性能优化：防抖函数依赖数组为空
+  // 这样防抖函数只创建一次，不会因为 store action 变化而被重置
+  // 函数内通过 getState() 获取最新的 store 值
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((keyword: string) => {
+        const store = useGalleryStore.getState();
+        // 只有当搜索关键词真正改变时才触发搜索
+        if (store.filters.search !== keyword) {
+           store.setFilters({ ...store.filters, search: keyword });
+           store.loadImages(true);
+        }
+      }, 500),
+    [] // 依赖数组为空，防抖函数只创建一次
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.currentTarget.value;
-    setFilters({ ...filters, search: keyword });
-    loadImages(true);
+    setLocalSearch(keyword);
+    debouncedSearch(keyword);
   };
 
   return (
@@ -63,7 +102,7 @@ export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChang
           <FormInput 
             type="text" 
             placeholder="搜索图片..." 
-            value={filters.search || ''}
+            value={localSearch}
             onChange={handleSearchChange}
             className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 hover:bg-white hover:border-primary-600 focus:border-primary-600 rounded-lg text-sm transition-all"
           />
@@ -150,6 +189,6 @@ export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChang
       </div>
     </div>
   );
-};
+});
 
 export default GalleryToolbar;

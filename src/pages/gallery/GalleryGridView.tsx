@@ -18,7 +18,6 @@ export const GalleryGridView = React.memo(forwardRef<
   GalleryGridProps
 >(({ renderedVisibleImages, columns: propsColumns, itemWidth: propsItemWidth }, ref) => {
   // 使用具体的 selector 避免不必要的重渲染
-  const images = useGalleryStore(state => state.images);
   const isLoading = useGalleryStore(state => state.isLoading);
 
   const internalGridRef = useRef<any>(null);
@@ -34,7 +33,6 @@ export const GalleryGridView = React.memo(forwardRef<
     if (propsColumns !== null && propsItemWidth !== null) {
       setColumns(propsColumns);
       setItemWidth(propsItemWidth);
-      console.log(`[GalleryGridView] Props updated: ${propsColumns} columns, ${propsItemWidth}px itemWidth`);
       
       // 更新 Masonry 实例
       const g = internalGridRef.current;
@@ -46,7 +44,7 @@ export const GalleryGridView = React.memo(forwardRef<
           }
         }
       } catch (e) {
-        console.warn('Grid layout update failed', e);
+        // 性能优化：移除控制台日志避免占用主线程
       }
     }
   }, [propsColumns, propsItemWidth]);
@@ -77,7 +75,7 @@ export const GalleryGridView = React.memo(forwardRef<
         useResizeObserver={true}
         observeChildren={true}
         className="w-full !overflow-hidden"
-        threshold={50}
+        threshold={100}
         passive="true"
       >
         {renderedVisibleImages.map((image) => (
@@ -88,13 +86,12 @@ export const GalleryGridView = React.memo(forwardRef<
           >
             <GalleryGridItem
               image={image}
-              columns={safeColumns}
             />
           </div>
         ))}
       </MasonryInfiniteGrid>
       
-      {isLoading && images.length > 0 && (
+      {isLoading && renderedVisibleImages.length > 0 && (
          <div className="py-4">
             <GallerySkeleton viewMode="grid" /> 
          </div>

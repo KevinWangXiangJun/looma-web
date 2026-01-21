@@ -1,4 +1,5 @@
-import { useEffect, useRef, useMemo, useState } from 'react';
+import { useEffect, useRef, useMemo, useState, startTransition } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { GalleryToolbar } from './GalleryToolbar';
 import { GalleryBatchBar } from './GalleryBatchBar';
 import { GalleryGridView } from './GalleryGridView';
@@ -7,33 +8,44 @@ import { useGalleryStore } from '@/store/galleryStore';
 import { usePageTitle } from '@/hooks';
 import { Card } from '@/components/ui/Card';
 import { FolderOpen, Loader2 } from 'lucide-react';
-import { getGridColumns } from '@/utils/galleryUtils';
+import { getGridColumns } from '@/utils/gallery';
 import { GALLERY_IMAGE_MIN_WIDTH, GALLERY_GAP, INFINITE_SCROLL_ROOT_MARGIN, INFINITE_SCROLL_THRESHOLD } from '@/constants/gallery';
 
 export function Gallery(): JSX.Element {
   usePageTitle('navigation.gallery');
 
-  // ============ Zustand Store 状态 ============
-  const images = useGalleryStore((state) => state.images);
-  const isInitialLoading = useGalleryStore((state) => state.isInitialLoading);
-  const viewMode = useGalleryStore((state) => state.viewMode);
-  const isLoading = useGalleryStore((state) => state.isLoading);
-  const hasMore = useGalleryStore((state) => state.hasMore);
-  const isBatchMode = useGalleryStore((state) => state.isBatchMode);
-  const selectedImages = useGalleryStore((state) => state.selectedImages);
-
-  // ============ Zustand Store 动作 ============
-  const loadImages = useGalleryStore((state) => state.loadImages);
-  const resetGallery = useGalleryStore((state) => state.resetGallery);
-  const toggleBatchMode = useGalleryStore((state) => state.toggleBatchMode);
-  const selectAllImages = useGalleryStore((state) => state.selectAllImages);
-  const clearImageSelection = useGalleryStore((state) => state.clearImageSelection);
+  // ============ Zustand Store 状态与动作合并优化 ============
+  const {
+    images,
+    isInitialLoading,
+    viewMode,
+    isLoading,
+    hasMore,
+    isBatchMode,
+    loadImages,
+    resetGallery,
+  } = useGalleryStore(
+    useShallow((state) => ({
+      images: state.images,
+      isInitialLoading: state.isInitialLoading,
+      viewMode: state.viewMode,
+      isLoading: state.isLoading,
+      hasMore: state.hasMore,
+      isBatchMode: state.isBatchMode,
+      loadImages: state.loadImages,
+      resetGallery: state.resetGallery,
+    }))
+  );
 
   // ============ 本地 State ============
   // 布局状态：从 Gallery 计算，传递给 GalleryGridView
   // 初始为 null，只有完全计算好后才有真实值
   const [gridColumns, setGridColumns] = useState<number | null>(null);
   const [gridItemWidth, setGridItemWidth] = useState<number | null>(null);
+  
+  // 性能优化：缓存两个视图的渲染状态，避免切换时重新计算
+  const [cachedGridView, setCachedGridView] = useState<React.ReactNode | null>(null);
+  const [cachedListView, setCachedListView] = useState<React.ReactNode | null>(null);
 
   // ============ Refs ============
   // DOM 引用
@@ -249,42 +261,39 @@ export function Gallery(): JSX.Element {
     };
   }, [viewMode]);
 
-  // ============ 事件处理 ============
-  // 批量操作处理函数
-  const handleBatchModeChange = () => {
-    toggleBatchMode();
-  };
-
-  const handleExitBatchMode = () => {
-    clearImageSelection();
-    toggleBatchMode();
-  };
-
-  const handleSelectAll = () => {
-    if (selectedImages.length === images.length) {
-      // 已全选，取消全选
-      clearImageSelection();
-    } else {
-      // 选中所有显示的图片
-      selectAllImages();
+  // 性能优化：当视图数据更新时，缓存对应视图的渲染结果
+  // 这样在切换视图时，不需要重新计算和渲染，直接使用缓存
+  useEffect(() => {
+    if (images.length === 0) {
+      setCachedGridView(null);
+      setCachedListView(null);
+      return;
     }
-  };
 
-  const handleCollect = () => {
-    console.log('Collect:', selectedImages);
-    // TODO: 实现收藏逻辑
-  };
-
-  const handleDownload = () => {
-    console.log('Download:', selectedImages);
-    // TODO: 实现下载逻辑
-  };
-
-  const handleDelete = () => {
-    console.log('Delete:', selectedImages);
-    // TODO: 实现删除逻辑
-  };
-
+    // 使用 startTransition 包装视图渲染，标记为低优先级更新
+    // 这样用户交互（如点击）不会被长时间的视图更新阻塞
+    startTransition(() => {
+      if (viewMode === 'grid') {
+        if (gridColumns !== null && gridItemWidth !== null) {
+          setCachedGridView(
+            <div className="gallery-grid-wrapper">
+              <GalleryGridView 
+                containerRef={containerRef} 
+                renderedVisibleImages={renderedVisibleImages}
+                columns={gridColumns}
+                itemWidth={gridItemWidth}
+              />
+            </div>
+          );
+        }
+      } else {
+        setCachedListView(
+          <GalleryListView renderedVisibleImages={renderedVisibleImages} />
+        );
+      }
+    });
+  }, [renderedVisibleImages, gridColumns, gridItemWidth, viewMode, images.length]);
+  
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20 min-h-full flex flex-col">
       <div className="mb-6 flex-shrink-0">
@@ -293,18 +302,9 @@ export function Gallery(): JSX.Element {
       </div>
 
       <div className="flex-shrink-0 mb-4 sticky top-0 bg-gradient-to-br from-background via-background to-muted/20 z-10">
-        <GalleryToolbar onBatchModeChange={handleBatchModeChange} />
+        <GalleryToolbar />
         {isBatchMode && (
-          <GalleryBatchBar
-            selectedCount={selectedImages.length}
-            totalCount={images.length}
-            isAllSelected={selectedImages.length === images.length}
-            onExit={handleExitBatchMode}
-            onSelectAll={handleSelectAll}
-            onCollect={handleCollect}
-            onDownload={handleDownload}
-            onDelete={handleDelete}
-          />
+          <GalleryBatchBar />
         )}
       </div>
 
@@ -335,22 +335,8 @@ export function Gallery(): JSX.Element {
         ) : (
           <div className="w-full">
             {
-              viewMode === 'grid' ? (
-                <div className="gallery-grid-wrapper">
-                  {gridColumns !== null && gridItemWidth !== null ? (
-                    <GalleryGridView 
-                      containerRef={containerRef} 
-                      renderedVisibleImages={renderedVisibleImages}
-                      columns={gridColumns}
-                      itemWidth={gridItemWidth}
-                    />
-                  ) : (
-                    <div className="w-full min-h-full" />
-                  )}
-                </div>
-              ) : (
-                <GalleryListView renderedVisibleImages={renderedVisibleImages} />
-              )
+              // 性能优化：使用缓存的视图，而不是每次都重新计算
+              viewMode === 'grid' ? cachedGridView : cachedListView
             }
             
             {/* 统一的加载触发器 - 放在可见的容器中 */}

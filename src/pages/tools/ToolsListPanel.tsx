@@ -2,11 +2,12 @@
  * 工具列表面板组件
  * 显示所有可用的工具列表，支持搜索功能
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { useToolsStore } from '@/store';
+import { useShallow } from 'zustand/react/shallow';
 import { TOOLS, getColorVariant } from '@/constants/tools';
 import type { Tool } from '@/types/tools';
 
@@ -14,9 +15,15 @@ interface ToolsListPanelProps {
   activeItem?: any;
 }
 
-export const ToolsListPanel: React.FC<ToolsListPanelProps> = () => {
+export const ToolsListPanel: React.FC<ToolsListPanelProps> = memo(() => {
   const { t } = useTranslation();
-  const { selectedToolId, setSelectedToolId } = useToolsStore();
+  // 性能优化：使用 useShallow 或独立 selector
+  const { selectedToolId, setSelectedToolId } = useToolsStore(
+    useShallow(state => ({
+      selectedToolId: state.selectedToolId,
+      setSelectedToolId: state.setSelectedToolId
+    }))
+  );
   const [searchQuery, setSearchQuery] = useState('');
 
   // 根据搜索关键词过滤工具
@@ -103,6 +110,6 @@ export const ToolsListPanel: React.FC<ToolsListPanelProps> = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ToolsListPanel;

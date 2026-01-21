@@ -6,6 +6,18 @@ import { extractExifFromImage, ExifInfo } from './exifTools';
 import type { GalleryImage, ImageFormat, GalleryFilters } from '@/types/gallery';
 
 /**
+ * 根据窗口宽度计算网格列数
+ * @param width 窗口宽度
+ */
+export const getGridColumns = (width: number): number => {
+  if (width >= 1280) return 4;
+  if (width >= 1024) return 3;
+  if (width >= 768) return 2;
+  if (width >= 640) return 2;
+  return 1;
+};
+
+/**
  * 读取本地文件并生成缩略图
  */
 const generateThumbnail = (file: File): Promise<string> => {
