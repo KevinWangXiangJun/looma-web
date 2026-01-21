@@ -4,7 +4,9 @@ export type ImageFormat = 'jpg' | 'png' | 'svg' | 'gif' | 'webp';
 // 单张图片数据结构
 export interface GalleryImage {
   id: string;
-  name: string;                       // 图片名称
+  name: string;                       // 英文文件名（不含扩展名）
+  chineseName?: string;               // 中文文件名（主题核心）- 展示在网格视图
+  description?: string;               // 中文描述 - 展示在列表视图
   url: string;                        // 原始图片URL
   thumbnail: string;                  // 缩略图URL
   width: number;                      // 原始宽度

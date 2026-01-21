@@ -13,14 +13,13 @@ interface GalleryGridProps {
   itemWidth: number | null;
 }
 
-export const GalleryGridView = forwardRef<
+export const GalleryGridView = React.memo(forwardRef<
   HTMLDivElement,
   GalleryGridProps
 >(({ renderedVisibleImages, columns: propsColumns, itemWidth: propsItemWidth }, ref) => {
-  const { 
-    images, 
-    isLoading,
-  } = useGalleryStore();
+  // 使用具体的 selector 避免不必要的重渲染
+  const images = useGalleryStore(state => state.images);
+  const isLoading = useGalleryStore(state => state.isLoading);
 
   const internalGridRef = useRef<any>(null);
   
@@ -102,7 +101,7 @@ export const GalleryGridView = forwardRef<
       )}
     </div>
   );
-});
+}));
 
 export default GalleryGridView;
 

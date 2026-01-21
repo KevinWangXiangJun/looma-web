@@ -7,7 +7,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/Select';
 import { GALLERY_COLLECTIONS } from '@/constants/gallery';
 
@@ -49,6 +48,12 @@ export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChang
     onBatchModeChange?.();
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.currentTarget.value;
+    setFilters({ ...filters, search: keyword });
+    loadImages(true);
+  };
+
   return (
     <div className="h-16 border-b border-gray-200 bg-white flex items-center justify-between flex-shrink-0 z-10">
       {/* Search & Collections Filter */}
@@ -58,6 +63,8 @@ export const GalleryToolbar: React.FC<GalleryToolbarProps> = ({ onBatchModeChang
           <FormInput 
             type="text" 
             placeholder="搜索图片..." 
+            value={filters.search || ''}
+            onChange={handleSearchChange}
             className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 hover:bg-white hover:border-primary-600 focus:border-primary-600 rounded-lg text-sm transition-all"
           />
         </div>

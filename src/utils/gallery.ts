@@ -3,7 +3,7 @@
  * 用于读取本地照片并提取其基础信息
  */
 import { extractExifFromImage, ExifInfo } from './exifTools';
-import type { GalleryImage, ImageFormat } from '@/types/gallery';
+import type { GalleryImage, ImageFormat, GalleryFilters } from '@/types/gallery';
 
 /**
  * 读取本地文件并生成缩略图
@@ -134,4 +134,70 @@ export const filterValidImageFiles = (files: FileList): File[] => {
   }
 
   return validFiles;
+};
+
+/**
+ * 模糊匹配搜索图片
+ * 支持：中文名、中文描述、英文名的任意位置匹配
+ * @param image 图片对象
+ * @param keyword 搜索关键词
+ * @returns 是否匹配
+ */
+export const fuzzyMatchImage = (
+  image: GalleryImage,
+  keyword: string
+): boolean => {
+  if (!keyword || !keyword.trim()) return true;
+
+  const searchTerm = keyword.toLowerCase().trim();
+
+  // 1. 精确匹配中文名（中文名不转小写，直接查找）
+  if (image.chineseName && image.chineseName.includes(keyword.trim())) {
+    return true;
+  }
+
+  // 2. 精确匹配描述（中文描述不转小写，直接查找）
+  if (image.description && image.description.includes(keyword.trim())) {
+    return true;
+  }
+
+  // 3. 英文名匹配（支持任意位置）
+  if (image.name.toLowerCase().includes(searchTerm)) {
+    return true;
+  }
+
+  // 4. 英文名分词匹配（例如搜索"sunset"可匹配"sunset-warrior-cloud-sky"）
+  const nameParts = image.name.split('-');
+  if (nameParts.some(part => part.toLowerCase().includes(searchTerm))) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * 按照过滤条件过滤图片列表
+ * @param images 原始图片列表
+ * @param filters 过滤条件
+ * @returns 过滤后的图片列表
+ */
+export const filterImages = (
+  images: GalleryImage[],
+  filters: GalleryFilters
+): GalleryImage[] => {
+  return images.filter(image => {
+    // 格式过滤 - 如果不是 'all' 才需要检查
+    if (filters.types && filters.types.length > 0 && !filters.types.includes('all') && !filters.types.includes(image.format)) {
+      return false;
+    }
+
+    // 搜索关键词过滤
+    if (filters.search && filters.search.trim()) {
+      if (!fuzzyMatchImage(image, filters.search)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 };

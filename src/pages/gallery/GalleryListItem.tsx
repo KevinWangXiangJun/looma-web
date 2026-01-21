@@ -24,14 +24,13 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const isBatchMode = useGalleryStore((state) => state.isBatchMode);
-  const selectedImages = useGalleryStore((state) => state.selectedImages);
+  // 只订阅当前图片的选中状态
+  const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
   const toggleImageSelection = useGalleryStore((state) => state.toggleImageSelection);
   const setPreviewImage = useGalleryStore((state) => state.setPreviewImage);
   const setShowPreview = useGalleryStore((state) => state.setShowPreview);
   const { handleDownload } = useDownloadManager();
   const { handleDelete } = useDeleteManager();
-
-  const selected = selectedImages.includes(image.id);
 
   const handleImageClick = (image: any) => {
     if (isBatchMode) {
@@ -64,13 +63,13 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
         className={`p-4 relative overflow-hidden cursor-pointer transition-all hover:shadow-md ${selected ? 'border border-primary-500 bg-primary-50' : ''}`}
         onClick={() => handleImageClick(image)}
       >
-        {selected && (
+        {/* {selected && (
           <div className="absolute inset-0 bg-primary/20 flex items-center justify-center pointer-events-none">
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
               <Check className="w-6 h-6 text-white" />
             </div>
           </div>
-        )}
+        )} */}
         
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-muted">
@@ -85,7 +84,10 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium truncate mb-1 text-sm">{image.name}</h4>
+                <h4 className="font-medium truncate mb-1 text-sm">{image.chineseName || image.name}</h4>
+                {image.description && (
+                  <p className="text-xs text-muted-foreground line-clamp-2">{image.description}</p>
+                )}
               </div>
 
               <DropdownMenu>

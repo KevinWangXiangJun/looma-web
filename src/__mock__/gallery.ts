@@ -1,4 +1,5 @@
 import { GalleryImage } from '@/types/gallery';
+import { galleryMetadataMap } from '@/__mock__/galleryMetadata';
 
 // 导入所有本地照片
 const galleryImages = import.meta.glob<{ default: string }>(
@@ -32,6 +33,7 @@ export const getImageDimensions = (src: string): Promise<{ width: number; height
 /**
  * 从本地照片生成mock数据
  * 使用动态导入的方式获取实际图片
+ * 同时关联中文名称和描述
  */
 export const createMockGalleryImages = async (): Promise<GalleryImage[]> => {
   const images: GalleryImage[] = [];
@@ -39,14 +41,20 @@ export const createMockGalleryImages = async (): Promise<GalleryImage[]> => {
   for (let i = 0; i < imagePaths.length; i++) {
     const imagePath = imagePaths[i];
     const fileName = getFileName(imagePath);
+    const fileNameWithoutExt = fileName.replace(/\.[^/.]+$/, '');
 
     try {
       // 获取实际图片尺寸
       const { width, height } = await getImageDimensions(imagePath);
 
+      // 从元数据映射中获取中文名称和描述
+      const metadata = galleryMetadataMap[fileNameWithoutExt];
+
       const image: GalleryImage = {
         id: `local-${i}`,
-        name: fileName.replace(/\.[^/.]+$/, ''),
+        name: fileNameWithoutExt,
+        chineseName: metadata?.chineseName || fileNameWithoutExt, // 中文名称，默认使用英文名
+        description: metadata?.description, // 中文描述
         url: imagePath,
         thumbnail: imagePath,
         width,
@@ -68,16 +76,24 @@ export const createMockGalleryImages = async (): Promise<GalleryImage[]> => {
 };
 
 // 预先生成的同步mock数据（用于初始化）
-export const mockGalleryImages: GalleryImage[] = imagePaths.map((imagePath, i) => ({
-  id: `local-${i}`,
-  name: getFileName(imagePath).replace(/\.[^/.]+$/, ''),
-  url: imagePath,
-  thumbnail: imagePath,
-  width: 400, // 占位符，会通过getImageDimensions更新
-  height: 300, // 占位符，会通过getImageDimensions更新
-  format: (getFileName(imagePath).split('.').pop()?.toLowerCase() as any) || 'jpg',
-  size: 0,
-  uploadedAt: new Date().toISOString(),
-  tags: ['local', 'gallery'],
-  resolution: '400x300', // 占位符
-}));
+export const mockGalleryImages: GalleryImage[] = imagePaths.map((imagePath, i) => {
+  const fileName = getFileName(imagePath);
+  const fileNameWithoutExt = fileName.replace(/\.[^/.]+$/, '');
+  const metadata = galleryMetadataMap[fileNameWithoutExt];
+
+  return {
+    id: `local-${i}`,
+    name: fileNameWithoutExt,
+    chineseName: metadata?.chineseName || fileNameWithoutExt,
+    description: metadata?.description,
+    url: imagePath,
+    thumbnail: imagePath,
+    width: 400, // 占位符，会通过getImageDimensions更新
+    height: 300, // 占位符，会通过getImageDimensions更新
+    format: (fileName.split('.').pop()?.toLowerCase() as any) || 'jpg',
+    size: 0,
+    uploadedAt: new Date().toISOString(),
+    tags: ['local', 'gallery'],
+    resolution: '400x300', // 占位符
+  };
+});

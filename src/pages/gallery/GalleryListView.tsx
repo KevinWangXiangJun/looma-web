@@ -8,13 +8,9 @@ interface GalleryListProps {
   renderedVisibleImages: GalleryImage[];
 }
 
-export const GalleryListView: React.FC<GalleryListProps> = ({ renderedVisibleImages }) => {
-  const {
-    images,
-    isLoading,
-  } = useGalleryStore();
-
-  
+export const GalleryListView: React.FC<GalleryListProps> = React.memo(({ renderedVisibleImages }) => {
+  const isLoading = useGalleryStore(state => state.isLoading);
+  const images = useGalleryStore(state => state.images);
 
   return (
     <div className="w-full space-y-3 pb-4">
@@ -32,7 +28,7 @@ export const GalleryListView: React.FC<GalleryListProps> = ({ renderedVisibleIma
       )}
     </div>
   );
-};
+});
 
 export default GalleryListView;
 

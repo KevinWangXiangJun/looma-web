@@ -69,6 +69,20 @@ export function Gallery(): JSX.Element {
     }
   }, [isInitialLoading]);
 
+  // 切换视图模式时重置自动加载锁
+  useEffect(() => {
+    // 切换视图时，布局会发生剧烈变化（特别是 Grid 模式需要重新计算布局），
+    // 此时 LoadMore 元素可能会暂时出现在可视区域内。
+    // 我们暂时禁用自动加载，直到布局稳定。
+    allowAutoLoadRef.current = false;
+    
+    const timer = setTimeout(() => {
+      allowAutoLoadRef.current = true;
+    }, 800); // 给予足够时间让布局稳定
+
+    return () => clearTimeout(timer);
+  }, [viewMode]);
+
   // ============ Effects: 滚动加载 ============
   // 统一的滚动加载逻辑
   useEffect(() => {
@@ -144,6 +158,7 @@ export function Gallery(): JSX.Element {
   };
 
   // 优化渲染列表计算，避免频繁变化导致闪烁
+  // 注意：搜索过滤已在服务端进行，这里只需要处理客户端格式过滤
   const renderedVisibleImages = useMemo(() => {
     return images;
   }, [images]);

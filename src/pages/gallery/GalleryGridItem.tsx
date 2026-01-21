@@ -12,12 +12,13 @@ export const GalleryGridItem: React.FC<GalleryGridItemProps> = memo(({
   columns = 3,
 }) => {
   const isBatchMode = useGalleryStore((state) => state.isBatchMode);
-  const selectedImages = useGalleryStore((state) => state.selectedImages);
   const toggleImageSelection = useGalleryStore((state) => state.toggleImageSelection);
   const setPreviewImage = useGalleryStore((state) => state.setPreviewImage);
   const setShowPreview = useGalleryStore((state) => state.setShowPreview);
-
-  const selected = selectedImages.includes(image.id);
+  
+  // 性能优化：只订阅当前图片是否被选中，而不是订阅整个 selectedImages 数组
+  // 这样当操作其他图片时，当前组件不会重渲染
+  const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
 
   const handleImageClick = (image: any) => {
     if (isBatchMode) {
@@ -37,7 +38,7 @@ export const GalleryGridItem: React.FC<GalleryGridItemProps> = memo(({
       <img 
         src={image.thumbnail || image.url} 
         alt={image.name}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-100"
+        className="w-full h-full object-cover"
         loading="lazy"
       />
       
@@ -46,8 +47,8 @@ export const GalleryGridItem: React.FC<GalleryGridItemProps> = memo(({
       
       {/* 信息遮罩 */}
       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <p className="text-white text-sm font-medium truncate">{image.name}</p>
-        {columns <= 2 && (
+        <p className="text-white text-sm font-medium truncate">{image.chineseName || image.name}</p>
+        {image.width && image.height && (
           <p className="text-white/80 text-xs">{image.width} x {image.height}</p>
         )}
       </div>
