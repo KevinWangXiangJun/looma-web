@@ -23,8 +23,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }): JSX.Ele
       {/* Sidebar 容器: 使用 tailwind 类处理过渡 */}
       <aside 
         className={cn(
-          "flex-shrink-0 transition-all duration-300 ease-in-out border-r border-gray-100",
-          isSidebarCollapsed ? "w-[72px]" : "w-[280px]" // 72px + 16.5rem(approx 264px) -> keeping 280px as standard width or adjusting to match text
+          "flex-shrink-0 transition-[width] duration-300 ease-in-out border-r border-gray-100 bg-white",
+          isSidebarCollapsed ? "w-[72px]" : "w-[280px]" 
         )}
       >
         <Sidebar />

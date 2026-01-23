@@ -173,7 +173,7 @@ export function Gallery(): JSX.Element {
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20 min-h-full flex flex-col">
       <div className="mb-6 flex-shrink-0">
-        <h1 className="text-2xl font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">我的图库</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">我的图库</h1>
         <p className="text-muted-foreground text-sm mt-1">管理您上传和生成的所有图片</p>
       </div>
 

@@ -53,11 +53,10 @@ export const GalleryGridView = React.memo(forwardRef<
     const container = containerRef.current;
     if (!container) return;
 
-    const handleResize = (entries: ResizeObserverEntry[]) => {
-      for (const entry of entries) {
-        const width = entry.contentRect.width;
+    let resizeTimer: NodeJS.Timeout;
+
+    const performLayout = (width: number) => {
         const newLayout = calculateLayout(width);
-        
         if (newLayout) {
           setLayout(prev => {
              if (!prev || prev.columns !== newLayout.columns || prev.itemWidth !== newLayout.itemWidth) {
@@ -66,29 +65,30 @@ export const GalleryGridView = React.memo(forwardRef<
              return prev;
           });
         }
-      }
+    };
+
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      // 防抖处理：避免 resize 过程中频繁触发重排
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        for (const entry of entries) {
+           performLayout(entry.contentRect.width);
+        }
+      }, 60);
     };
 
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(container);
 
-    // 初始计算，处理首次渲染可能没有触发 resize 的情况
+    // 初始计算
     const initialWidth = container.clientWidth;
      if (initialWidth > 0) {
-        const initialLayout = calculateLayout(initialWidth);
-        // 如果跟当前状态不同才更新，避免不必要的渲染
-        if (initialLayout) {
-             setLayout(prev => {
-                if (!prev || prev.columns !== initialLayout.columns || prev.itemWidth !== initialLayout.itemWidth) {
-                    return initialLayout;
-                }
-                return prev;
-             });
-        }
+        performLayout(initialWidth);
     }
 
     return () => {
       resizeObserver.disconnect();
+      clearTimeout(resizeTimer);
     };
   }, []); // 仅挂载时执行一次 observer 绑定
 
