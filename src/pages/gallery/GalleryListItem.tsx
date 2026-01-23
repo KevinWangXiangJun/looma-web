@@ -26,7 +26,7 @@ export const GalleryListItem: React.FC<GalleryListItemProps> = memo(({
   
   // 只订阅当前图片的选中状态
   // 优化：仅订阅选中状态，操作方法直接通过 getState 调用，避免不必要的订阅和对象创建
-  const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
+  const selected = useGalleryStore((state) => !!state.selectedImages[image.id]);
   
   const { handleDownload } = useDownloadManager();
   const { handleDelete } = useDeleteManager();

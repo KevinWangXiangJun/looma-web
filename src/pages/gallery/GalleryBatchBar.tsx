@@ -22,7 +22,7 @@ export const GalleryBatchBar = memo(() => {
     }))
   );
 
-  const selectedCount = selectedImages.length;
+  const selectedCount = Object.keys(selectedImages).length;
   const isAllSelected = selectedCount > 0 && selectedCount === totalCount;
 
   // 动作处理函数

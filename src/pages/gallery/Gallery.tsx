@@ -38,10 +38,6 @@ export function Gallery(): JSX.Element {
   );
 
   // ============ 本地 State ============
-  // 布局状态：从 Gallery 计算，传递给 GalleryGridView
-  // 初始为 null，只有完全计算好后才有真实值
-  const [gridColumns, setGridColumns] = useState<number | null>(null);
-  const [gridItemWidth, setGridItemWidth] = useState<number | null>(null);
   
   // 性能优化：缓存两个视图的渲染状态，避免切换时重新计算
   const [cachedGridView, setCachedGridView] = useState<React.ReactNode | null>(null);
@@ -65,8 +61,6 @@ export function Gallery(): JSX.Element {
   // 布局相关 Refs
   // 标记是否已完成初始化
   const hasInitializedRef = useRef(false);
-  // 追踪上一次计算的宽度，用于防止不必要的重复计算
-  const prevCalculatedWidthRef = useRef<number | null>(null);
   
   // ============ Effects: 更新 Refs ============
   // 每次依赖变化时更新 ref，确保 IntersectionObserver 中能获取最新值
@@ -133,42 +127,6 @@ export function Gallery(): JSX.Element {
     };
   }, [isInitialLoading]);
   
-  // ============ Effects: 布局计算 ============
-  // 计算布局函数（从 GalleryGridView 移到这里）
-  const calculateLayout = (): { columns: number; itemWidth: number } | null => {
-    const container = containerRef.current;
-    if (!container) {
-      return null;
-    }
-    
-    const measuredWidth = (typeof container.clientWidth === 'number' && container.clientWidth > 0)
-      ? container.clientWidth
-      : (container.getBoundingClientRect().width || container.offsetWidth || 0);
-    const width = Math.max(0, measuredWidth);
-    
-    if (width <= 0) {
-      return null;
-    }
-
-    let newColumns = Math.max(1, getGridColumns(width));
-    
-    const minW = typeof GALLERY_IMAGE_MIN_WIDTH === 'number' && GALLERY_IMAGE_MIN_WIDTH > 0 
-      ? GALLERY_IMAGE_MIN_WIDTH 
-      : 250;
-    
-    const gap = GALLERY_GAP;
-    const totalGap = gap * Math.max(0, newColumns - 1);
-    let columnWidth = Math.floor((width - totalGap) / newColumns);
-    
-    while (newColumns > 1 && columnWidth < minW) {
-      newColumns -= 1;
-      const updatedGap = gap * Math.max(0, newColumns - 1);
-      columnWidth = Math.floor((width - updatedGap) / newColumns);
-    }
-
-    return { columns: newColumns, itemWidth: columnWidth };
-  };
-
   // 优化渲染列表计算，避免频繁变化导致闪烁
   // 注意：搜索过滤已在服务端进行，这里只需要处理客户端格式过滤
   const renderedVisibleImages = useMemo(() => {
@@ -183,84 +141,6 @@ export function Gallery(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 统一的布局初始化和管理
-  useEffect(() => {
-    if (viewMode !== 'grid' || !containerRef.current) {
-      return;
-    }
-
-    let resizeTimer: NodeJS.Timeout;
-    
-    // ResizeObserver 回调函数
-    const handleResize = () => {
-      // 防抖处理：150ms 内的连续变化合并为一次计算
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const result = calculateLayout();
-        if (result) {
-          const { columns, itemWidth } = result;
-          setGridColumns(columns);
-          setGridItemWidth(itemWidth);
-        }
-      }, 150);
-    };
-    
-    // 使用 ResizeObserver 监听容器大小变化
-    const resizeObserver = new ResizeObserver(handleResize);
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    
-    // 立即执行一次初始计算
-    const result = calculateLayout();
-    
-    if (result) {
-      const { columns, itemWidth } = result;
-      hasInitializedRef.current = true;
-      prevCalculatedWidthRef.current = containerRef.current?.clientWidth || 0;
-      setGridColumns(columns);
-      setGridItemWidth(itemWidth);
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-      clearTimeout(resizeTimer);
-    };
-  }, [viewMode]);
-
-  // 浏览器窗口大小变化时重新计算布局
-  useEffect(() => {
-    if (viewMode !== 'grid' || !hasInitializedRef.current) {
-      return;
-    }
-
-    let resizeTimer: NodeJS.Timeout;
-
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const result = calculateLayout();
-        if (result) {
-          const { columns, itemWidth } = result;
-          const currentWidth = containerRef.current?.clientWidth || 0;
-          
-          if (currentWidth !== prevCalculatedWidthRef.current) {
-            prevCalculatedWidthRef.current = currentWidth;
-            setGridColumns(columns);
-            setGridItemWidth(itemWidth);
-          }
-        }
-      }, 200);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimer);
-    };
-  }, [viewMode]);
-
   // 性能优化：当视图数据更新时，缓存对应视图的渲染结果
   // 这样在切换视图时，不需要重新计算和渲染，直接使用缓存
   useEffect(() => {
@@ -274,25 +154,21 @@ export function Gallery(): JSX.Element {
     // 这样用户交互（如点击）不会被长时间的视图更新阻塞
     startTransition(() => {
       if (viewMode === 'grid') {
-        if (gridColumns !== null && gridItemWidth !== null) {
-          setCachedGridView(
-            <div className="gallery-grid-wrapper">
-              <GalleryGridView 
-                containerRef={containerRef} 
-                renderedVisibleImages={renderedVisibleImages}
-                columns={gridColumns}
-                itemWidth={gridItemWidth}
-              />
-            </div>
-          );
-        }
+        // GridView 现在自己处理布局计算，不需要传递 columns 和 width
+        setCachedGridView(
+          <div className="gallery-grid-wrapper">
+            <GalleryGridView 
+              renderedVisibleImages={renderedVisibleImages}
+            />
+          </div>
+        );
       } else {
         setCachedListView(
           <GalleryListView renderedVisibleImages={renderedVisibleImages} />
         );
       }
     });
-  }, [renderedVisibleImages, gridColumns, gridItemWidth, viewMode, images.length]);
+  }, [renderedVisibleImages, viewMode, images.length]);
   
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20 min-h-full flex flex-col">

@@ -11,7 +11,7 @@ export const GalleryGridItem: React.FC<GalleryGridItemProps> = memo(({
 }) => {
   // 性能优化：只订阅当前图片是否被选中，而不是订阅整个 selectedImages 数组
   // 这样当操作其他图片时，当前组件不会重渲染
-  const selected = useGalleryStore((state) => state.selectedImages.includes(image.id));
+  const selected = useGalleryStore((state) => !!state.selectedImages[image.id]);
 
   const handleImageClick = useCallback((image: any) => {
     // 性能优化：直接从 "getState()" 获取状态和方法
