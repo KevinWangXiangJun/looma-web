@@ -42,14 +42,14 @@ export const MoreNavButton = ({ moreNavItems = [] }: MoreNavButtonProps): JSX.El
           <div className={`p-2 rounded-lg flex items-center justify-center transition-all duration-200 ${
             isMoreButtonSelected 
               ? 'bg-primary-600/30 text-primary-600' 
-              : 'text-primary-600 hover:bg-primary-600/20'
+              : 'text-gray-600 hover:bg-gray-200 hover:text-primary-600'
           }`}>
             <MoreHorizontal
               size={20}
               className="stroke-[1.5px] transition-all duration-200 group-hover:scale-110"
             />
           </div>
-          <span className={`text-xs font-medium text-primary-600 leading-none text-center max-w-full truncate px-1`}>
+          <span className={`text-xs font-medium leading-none text-center max-w-full truncate px-1 ${isMoreButtonSelected ? "text-primary-600" : "text-gray-600"}`}>
             {t('navigation.more') || 'More'}
           </span>
         </button>
@@ -62,7 +62,7 @@ export const MoreNavButton = ({ moreNavItems = [] }: MoreNavButtonProps): JSX.El
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left text-sm text-primary-600 hover:bg-primary-600/20 transition-colors"
+                className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-primary-600 transition-colors"
               >
                 <Icon size={16} className="flex-shrink-0" />
                 <span className="truncate">{t(item.label) || item.label}</span>

@@ -1,7 +1,6 @@
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '@/store';
-import { useShallow } from 'zustand/react/shallow';
 import { getSidebarPanelContent } from './SidebarPanelContent';
 
 /**
@@ -12,31 +11,23 @@ import { getSidebarPanelContent } from './SidebarPanelContent';
 export const SidebarPanel = memo((): JSX.Element | null => {
   const { t } = useTranslation();
   
-  const { isSidebarCollapsed, activeItem } = useNavigationStore(
-    useShallow((state) => ({
-      isSidebarCollapsed: state.isSidebarCollapsed,
-      activeItem: state.activeItem,
-    }))
+  // 关键优化：只订阅 activeItem，完全移除对 isSidebarCollapsed 的订阅
+  // 这样 Sidebar 的展开/折叠动画就不会触发 SidebarPanel 的任何重渲染
+  const activeItem = useNavigationStore(
+    (state) => state.activeItem
   );
 
   // 根据 activeItem 动态获取内容组件
   const ContentComponent = useMemo(() => {
     return activeItem?.id ? getSidebarPanelContent(activeItem.id) : null;
   }, [activeItem?.id]);
-  
-  // 性能优化策略：
-  // - 当折叠时返回 null，完全卸载 DOM
-  // - 使用 will-change 提示浏览器做好渲染层的准备
-  // - 使用 transform 和 opacity 做动画（比 width 更高效），但由于直接返回 null 就不需要了
-  if (isSidebarCollapsed) return null;
 
   return (
     <div 
-      className="h-full flex flex-col overflow-hidden border-r border-gray-300 animate-in fade-in slide-in-from-left-64 duration-300"
+      className="h-full flex flex-col overflow-hidden border-r border-gray-300"
       style={{
-        width: '16.5rem',
-        // 为了让动画在浏览器层面更高效
-        willChange: 'contents',
+        // 宽度由 MainLayout 的 CSS 控制，这里只设置 CSS Containment
+        contain: 'strict',
       }}
     >
       {/* 面板头部 */}

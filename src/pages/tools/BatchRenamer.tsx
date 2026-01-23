@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Files, Wand2, RefreshCw, ArrowRight, Download, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
+import { Wand2, RefreshCw, ArrowRight, Download, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FileUpload } from '@/components/common/FileUpload';
-import { Card } from '@/components/ui/Card';
 import {
   Select,
   SelectContent,
@@ -28,7 +26,6 @@ const MOCK_AI_KEYWORDS = [
 ];
 
 export function BatchRenamer(): JSX.Element {
-  const { t } = useTranslation();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [mode, setMode] = useState<'ai' | 'pattern' | 'replace'>('ai');
   const [isProcessing, setIsProcessing] = useState(false);

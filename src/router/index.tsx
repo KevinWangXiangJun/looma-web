@@ -1,18 +1,29 @@
+import { Suspense, lazy } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import { ROUTES } from '@/constants';
-import Login from '@/pages/login';
-import Home from '@/pages/home';
-import Projects from '@/pages/projects';
-import Brands from '@/pages/brands';
-import Gallery from '@/pages/gallery';
-import Tools from '@/pages/tools';
-import Tasks from '@/pages/tasks';
-import Templates from '@/pages/templates';
-import Apps from '@/pages/apps';
-import ContentPlanning from '@/pages/contentPlanning';
-import MarketingStudio from '@/pages/marketingStudio';
-import DesignSchool from '@/pages/designSchool';
+import { Loader2 } from 'lucide-react';
 import ProtectedRoute from './ProtectedRoute';
+
+// 路由懒加载 - 性能优化
+const Login = lazy(() => import('@/pages/login'));
+const Home = lazy(() => import('@/pages/home'));
+const Projects = lazy(() => import('@/pages/projects'));
+const Brands = lazy(() => import('@/pages/brands'));
+const Gallery = lazy(() => import('@/pages/gallery'));
+const Tools = lazy(() => import('@/pages/tools'));
+const Tasks = lazy(() => import('@/pages/tasks'));
+const Templates = lazy(() => import('@/pages/templates'));
+const Apps = lazy(() => import('@/pages/apps'));
+const ContentPlanning = lazy(() => import('@/pages/contentPlanning'));
+const MarketingStudio = lazy(() => import('@/pages/marketingStudio'));
+const DesignSchool = lazy(() => import('@/pages/designSchool'));
+
+// 加载中组件
+const PageLoader = () => (
+  <div className="flex items-center justify-center w-full h-full min-h-[50vh]">
+    <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+  </div>
+);
 
 /**
  * 应用路由配置
@@ -21,9 +32,10 @@ import ProtectedRoute from './ProtectedRoute';
  */
 function AppRoutes(): JSX.Element {
   return (
-    <Routes>
-      {/* 登录页面 - 公开路由 */}
-      <Route path={ROUTES.LOGIN} element={<Login />} />
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        {/* 登录页面 - 公开路由 */}
+        <Route path={ROUTES.LOGIN} element={<Login />} />
 
       {/* 首页 - 受保护路由（需要登录） */}
       <Route
@@ -140,7 +152,8 @@ function AppRoutes(): JSX.Element {
 
       {/* 404 页面 */}
       <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }
 

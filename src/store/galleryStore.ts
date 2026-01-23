@@ -21,7 +21,7 @@ interface GalleryState {
 
   // 批量模式状态
   isBatchMode: boolean;
-  selectedImages: string[];
+  selectedImages: Record<string, boolean>; // 选中项 ID -> boolean
 
   // 下载记录
   downloads: string[];
@@ -40,7 +40,8 @@ interface GalleryState {
   toggleImageSelection: (id: string) => void;
   selectAllImages: () => void;
   clearImageSelection: () => void;
-  setSelectedImages: (ids: string[] | ((prev: string[]) => string[])) => void;
+  // 很少直接使用，保留兼容或删除
+  setSelectedImages: (map: Record<string, boolean>) => void;
 
   // 收藏、删除、下载操作
   toggleFavorite: (id: string) => void;
@@ -74,7 +75,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
 
   // 批量模式初始状态
   isBatchMode: false,
-  selectedImages: [],
+  selectedImages: {}, // ID -> boolean 映射
   downloads: [],
 
   // 动作实现
@@ -87,38 +88,59 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
   setPage: (page) => set({ page }),
   setPreviewImage: (previewImage) => set({ previewImage }),
   setShowPreview: (showPreview) => set({ showPreview }),
-  setSelectedImages: (ids) => set((state) => ({
-    selectedImages: typeof ids === 'function' ? ids(state.selectedImages) : ids,
-  })),
+  // setSelectedImages 不再常用，保持基本实现
+  setSelectedImages: (map) => set({ selectedImages: map }),
   
   // 批量操作实现
   toggleBatchMode: () => set((state) => ({ 
     isBatchMode: !state.isBatchMode,
-    selectedImages: [] 
+    selectedImages: {} 
   })),
   
   toggleImageSelection: (id) => set((state) => {
-    const isSelected = state.selectedImages.includes(id);
-    if (isSelected) {
-      return { selectedImages: state.selectedImages.filter(itemId => itemId !== id) };
+    // 浅拷贝对象以便触发更新
+    const nextSelected = { ...state.selectedImages };
+    
+    // 简单的开关逻辑：存在则删除（取消选中），不存在则添加（选中）
+    if (nextSelected[id]) {
+      delete nextSelected[id];
     } else {
-      return { selectedImages: [...state.selectedImages, id] };
+      nextSelected[id] = true;
     }
+    return { selectedImages: nextSelected };
   }),
   
   selectAllImages: () => set((state) => {
-    // 性能优化：使用 Set 进行 O(1) 查询，而不是数组 includes() 的 O(n)
-    // 但在这里我们直接创建数组，使用 length 对比作为快速判断
-    if (state.selectedImages.length === state.images.length) {
-      // 已全选，则取消全选
-      return { selectedImages: [] };
+    // 需求：只选中当前已加载显示的图片，不涉及未加载的图片
+    // 逻辑：如果当前所有图片都已选中，则取消全选；否则全选当前所有图片
+    
+    const currentImages = state.images;
+    if (currentImages.length === 0) return {};
+
+    // 检查是否全选的状态：所有当前图片的ID都在 selectedImages 中
+    const isAllCurrentSelected = currentImages.every(img => state.selectedImages[img.id]);
+    
+    if (isAllCurrentSelected) {
+      // 已经是全选 -> 取消全选
+      return { selectedImages: {} };
+    } else {
+      // 尚未全选 -> 全选当前所有
+      // 使用 reduce 快速构建新的 Map
+      const newSelected: Record<string, boolean> = {};
+      
+      // 保留原本可能存在的选中项（如果需要支持跨页保留，这里可以 merge；
+      // 但根据"只选中第一次显示"的描述，用户可能期望的是操作当前视图集。
+      // 这里我们选择覆盖，或者合并？通常全选是针对当前列表。）
+      // 考虑到这是"全选当前"，我们简单地将当前列表的所有项设为 true。
+      currentImages.forEach(img => {
+        newSelected[img.id] = true;
+      });
+      
+      return { selectedImages: newSelected };
     }
-    // 未全选，则全选
-    // 性能优化：避免创建临时对象，直接使用 from 方法
-    return { selectedImages: state.images.map(img => img.id) };
   }),
   
-  clearImageSelection: () => set({ selectedImages: [] }),
+  clearImageSelection: () => set({ selectedImages: {} }),
 
   // 切换单张图片收藏状态
   toggleFavorite: (id) => set((state) => ({
@@ -159,7 +181,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
     hasMore: true, 
     isInitialLoading: true,
     isBatchMode: false,
-    selectedImages: [],
+    selectedImages: {},
     previewImage: null,
     showPreview: false,
     downloads: [],
@@ -179,7 +201,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
         page: 1, 
         hasMore: true, 
         images: [],
-        selectedImages: [],
+        selectedImages: {},
         isInitialLoading: true
       });
     }
